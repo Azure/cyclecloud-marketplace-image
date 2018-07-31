@@ -3,7 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 config_file="config.json"
-app=
 
 function usage(){
     me=`basename $0`
@@ -44,43 +43,23 @@ read_value sp_password ".service_principal.password"
 read_value tenant_id ".service_principal.tenant_id"
 read_value publish_rg ".publish.resource_group"
 read_value publish_storage ".publish.storage_account"
-read_value build_image_name ".build_vm.image_name"
-read_value build_image_publisher ".build_vm.image_publisher"
-read_value build_image_offer ".build_vm.image_offer"
-read_value build_image_sku ".build_vm.image_sku"
-read_value build_vm_size ".build_vm.vm_size"
+read_value build_image_name ".build.image_name"
+read_value build_image_publisher ".build.image_publisher"
+read_value build_image_offer ".build.image_offer"
+read_value build_image_sku ".build.image_sku"
+read_value build_vm_size ".build.vm_size"
+read_value build_rg ".build.resource_group"
 read_value packer_exe ".packer.executable"
+read_value cyclecloud_installer_url ".cyclecloud_installer_url"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
-# do we use the service principal?
-current_subscription="$(az account show | jq -r .id)"
-if [ "$current_subscription" != "$subscription_id" ]; then
-    # echo "Log in with Azure CLI"
-    # az login --service-principal \
-    #     --username=$sp_client_id \
-    #     --password=$sp_client_secret \
-    #     --tenant=$sp_tenant_id \
-    #     --output table
-    # if [ $? != 0 ]; then
-    #     echo "ERROR: Failed to log in to Azure CLI"
-    #     exit 1
-    # fi
-    echo "Setting subscription ($subscription_id)"
-    az account set --subscription "$subscription_id"
-    if [ $? != 0 ]; then
-        echo "ERROR: Failed to set the subscription"
-        exit 1
-    fi
-fi
-
-# Generate SAS key to 
 # run packer
 packer_log=packer-output-$timestamp.log
 $packer_exe build \
     -var subscription_id=$subscription_id \
     -var location=$location \
-    -var resource_group=$images_rg \
+    -var resource_group=$build_rg \
     -var storage_account=$images_storage \
     -var tenant_id=$sp_tenant_id \
     -var client_id=$sp_client_id \
@@ -100,23 +79,11 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-rm $app_install_script
 
 # get vhd source from the packer output
 vhd_source="$(grep -Po '(?<=OSDiskUri\: )[^$]*' $packer_log)"
 
-rm $packer_log
+echo $vhd_source 
 
+echo $packer_log
 
-echo "Creating image: $app-$timestamp (using $vhd_source)"
-az image create \
-    --name $app-$timestamp \
-    --resource-group $images_rg \
-    --source $vhd_source \
-    --os-type Linux \
-    --location $location \
-    --output table
-if [ $? != 0 ]; then
-    echo "ERROR: Failed to create image"
-    exit 1
-fi
