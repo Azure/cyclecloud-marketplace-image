@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 yum install -y java-1.8.0-openjdk-headless 
-_tmpdir=$(mktemp)
+_tmpdir=$(mktemp -d)
 pushd $_tmpdir
 
 CS_ROOT=/opt/cycle_server

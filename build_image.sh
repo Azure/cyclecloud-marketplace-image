@@ -33,7 +33,7 @@ echo "config file: $config_file"
 
 function read_value {
     read $1 <<< $(jq -r "$2" $config_file)
-    #echo "read_value: $1=${!1}"
+    echo "read_value: $1=${!1}"
 }
 
 read_value subscription_id ".subscription_id"
@@ -67,11 +67,11 @@ packer build \
     -var tenant_id=$tenant_id \
     -var client_id=$client_id \
     -var client_secret=$client_secret \
-    -var image_name=$image_name \
-    -var image_publisher=$image_publisher \
-    -var image_offer=$image_offer \
-    -var image_sku=$image_sku \
-    -var vm_size=$vm_size \
+    -var image_name=$build_image_name \
+    -var image_publisher=$build_image_publisher \
+    -var image_offer=$build_image_offer \
+    -var image_sku=$build_image_sku \
+    -var vm_size=$build_vm_size \
     -var cyclecloud_install_script=$cyclecloud_install_script \
     -var cyclecloud_installer_url=$cyclecloud_installer_url \
     packer/build.json \
