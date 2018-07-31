@@ -38,8 +38,8 @@ function read_value {
 
 read_value subscription_id ".subscription_id"
 read_value location ".location"
-read_value sp_application_id ".service_principal.application_id"
-read_value sp_password ".service_principal.password"
+read_value client_id ".service_principal.application_id"
+read_value client_secret ".service_principal.password"
 read_value tenant_id ".service_principal.tenant_id"
 read_value publish_rg ".publish.resource_group"
 read_value publish_storage ".publish.storage_account"
@@ -48,22 +48,25 @@ read_value build_image_publisher ".build.image_publisher"
 read_value build_image_offer ".build.image_offer"
 read_value build_image_sku ".build.image_sku"
 read_value build_vm_size ".build.vm_size"
+read_value build_storage_account ".build.storage_account"
+read_value build_container ".build.blob_container"
 read_value build_rg ".build.resource_group"
-read_value packer_exe ".packer.executable"
 read_value cyclecloud_installer_url ".cyclecloud_installer_url"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
+cyclecloud_install_script="./scripts/setup_cyclecloud.sh"
 # run packer
 packer_log=packer-output-$timestamp.log
-$packer_exe build \
+packer build \
     -var subscription_id=$subscription_id \
     -var location=$location \
     -var resource_group=$build_rg \
-    -var storage_account=$images_storage \
-    -var tenant_id=$sp_tenant_id \
-    -var client_id=$sp_client_id \
-    -var client_secret=$sp_client_secret \
+    -var storage_account=$build_storage_account \
+    -var blob_container=$build_container \
+    -var tenant_id=$tenant_id \
+    -var client_id=$client_id \
+    -var client_secret=$client_secret \
     -var image_name=$image_name \
     -var image_publisher=$image_publisher \
     -var image_offer=$image_offer \
