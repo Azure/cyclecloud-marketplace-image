@@ -38,6 +38,6 @@ az image create \
 az vm create \
    --resource-group $tmpgroup \
    --name ${tmpgroup}-cc-vm \
-   --image ${tmpgroup}-cc
+   --image ${tmpgroup}-cc \
    --admin-username azureuser \
    --ssh-key-value ~/.ssh/id_rsa.pub
