@@ -9,8 +9,8 @@ The scripts in this repo use packer to build an image. The image is then tested,
 
 The Marketplace publishing guideline recommends that a separate subscription is used to hold the marketplace-linked VHDs, and that this subscription should not be used for anything else besides holding the storage account. 
 
-    - The PM subscription is used to build the packer image and testing
-    - A separate marketplace subscription is used for the storage account
+* The PM subscription is used to build the packer image and testing
+* A separate marketplace subscription is used for the storage account
 
 ## Pre-requisites
 
@@ -63,19 +63,23 @@ You should also have a config.json file in this directory. This json file has th
 
 2. Run the build script. This launches the packer process
 
+    ```
     ./build_image.sh
+    ```
 
 3. Test the images using the VHD_URL:
 
 The build script outputs a URL for the VHD. To test the VHD, provide it as an input to the test script:
-
+    ```
     ./test_vhd.sh ${VHD_URL}
+    ```
 
 3. Copy VHD to azure marketplace storage account
 The target storage account is the one that is actually used for publishing. 
 After verifying that the test VM using the VHD is working, copy it to the storage account for publishing:
-
+    ```
     pogo cp az://cyclecloudimagebuilder/system/Microsoft.Compute/Images/imagevhds/${VHD_NAME} az://azurecyclecloudmrktpl/imagevhds/
+    ```
 
 4. Go to the [publishing portal](https://cloudpartner.azure.com), update the SKU with a new version
 
