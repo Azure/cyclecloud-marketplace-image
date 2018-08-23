@@ -14,7 +14,8 @@
         "image_sku": "",
         "vm_size": "",
         "cyclecloud_install_script": "",
-        "cyclecloud_installer_url": ""
+        "cyclecloud_installer_url": "",
+        "cyclecloud_version": ""
     },
     "builders": [
         {
@@ -32,7 +33,7 @@
             "resource_group_name": "{{user `resource_group`}}",
             "storage_account": "{{user `storage_account`}}",
             "capture_container_name": "{{user `blob_container`}}",
-            "capture_name_prefix": "cyclecloud-{{user `image_name`}}",
+            "capture_name_prefix": "cc-{{user `cyclecloud_version`}}-{{user `image_name`}}",
   
             "os_type": "Linux",
             "vm_size":  "{{user `vm_size`}}",
@@ -55,7 +56,8 @@
                 "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
             ],
             "environment_vars": [
-                "CYCLECLOUD_INSTALLER_URL={{user `cyclecloud_installer_url`}}"
+                "CYCLECLOUD_INSTALLER_URL={{user `cyclecloud_installer_url`}}",
+                "CYCLECLOUD_VERSION={{user `cyclecloud_version`}}"
             ],
             "inline_shebang": "/bin/bash -e",
             "type": "shell",

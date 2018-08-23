@@ -52,6 +52,7 @@ read_value build_storage_account ".build.storage_account"
 read_value build_container ".build.blob_container"
 read_value build_rg ".build.resource_group"
 read_value cyclecloud_installer_url ".cyclecloud_installer_url"
+read_value cyclecloud_version ".cyclecloud_version"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
@@ -74,6 +75,7 @@ packer build \
     -var vm_size=$build_vm_size \
     -var cyclecloud_install_script=$cyclecloud_install_script \
     -var cyclecloud_installer_url=$cyclecloud_installer_url \
+    -var cyclecloud_version=$cyclecloud_version\
     packer/build.json \
     | tee $packer_log
 

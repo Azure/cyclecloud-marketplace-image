@@ -9,6 +9,6 @@
 ./test_vhd.sh ${VHD_URL}
 
 3. If tests pass, copy the VHD to the marketplace storage account:
-pogo cp az://cyclecloudimagebuilder/system/Microsoft.Compute/Images/imagevhds/${VHD_NAME} az://azurecyclecloudmrktpl/imagevhds/
+./deploy_vhd.sh ${VHD_URL}
 
 
