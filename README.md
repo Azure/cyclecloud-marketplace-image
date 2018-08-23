@@ -28,7 +28,8 @@ You should also have a config.json file in this directory. This json file has th
 {
     "subscription_id": "PM-Subscription-Used-By-Packer", 
     "location": "eastus",
-    "cyclecloud_installer_url": "https://foo.bar/cyclecloud-linux.tar.gz",
+    "cyclecloud_installer_url": "https://cyclecloudarm.blob.core.windows.net/cyclecloudrelease",
+    "cyclecloud_version": "7.5.1",
     "packer": {
         "executable": "packer"
     },
@@ -51,7 +52,8 @@ You should also have a config.json file in this directory. This json file has th
     "publish": {
         "resource_group": "cyclecloud_mrktpl_storage_account",
         "storage_account": "azurecyclecloudmrktpl",
-        "image_container": "imagevhds"
+        "image_container": "imagevhds",
+        ""storage_key": "ACCESSKEY-For-StorageAccount",
     }
 }
 
