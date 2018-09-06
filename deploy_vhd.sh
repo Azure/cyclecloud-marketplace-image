@@ -25,8 +25,8 @@ echo "Generating SAS key for the new VHD"
 
 conn="DefaultEndpointsProtocol=https;AccountName=$storage_account;AccountKey=$storage_key"
 
-start_date=$(date +%Y-%m-%d -d "yesterday")
-end_date=$(date +%Y-%m-%d -d "+30 day")
+start_date=$(date +%Y-%m-%d -d "yesterday")T00:00:00Z
+end_date=$(date +%Y-%m-%d -d "+30 day")T00:00:00Z
 sas_key=$(az storage container generate-sas -n $image_container --permissions rl --start $start_date --expiry $end_date --connection-string $conn | tr -d '"') 
 
 echo "SAS Key: $sas_key"
