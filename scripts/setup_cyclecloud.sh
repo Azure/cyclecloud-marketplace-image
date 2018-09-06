@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+yum -y update --security
 yum install -y java-1.8.0-openjdk-headless 
 _tmpdir=$(mktemp -d)
 pushd $_tmpdir
