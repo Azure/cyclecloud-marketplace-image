@@ -2,6 +2,19 @@
 set -ex
 yum -y update --security
 yum install -y java-1.8.0-openjdk-headless 
+
+# mount data disk
+parted /dev/disk/azure/scsi1/lun0 --script -- mklabel gpt
+parted -a optimal /dev/disk/azure/scsi1/lun0 mkpart primary 0% 100%
+# try a sleep here to wait for the symlink
+sleep 10s
+mkfs -t xfs /dev/disk/azure/scsi1/lun0-part1
+disk_uuid=$(blkid -o value -s UUID  /dev/disk/azure/scsi1/lun0-part1)
+mkdir /mnt/cycle_server
+echo "UUID=$disk_uuid /mnt/cycle_server xfs defaults,nofail 1 2" >> /etc/fstab
+mount -a
+ln -s /mnt/cycle_server /opt/
+
 _tmpdir=$(mktemp -d)
 pushd $_tmpdir
 

@@ -1,7 +1,14 @@
 #! /bin/bash
-vhd_source=$1
-if [ -z $vhd_source ];then
+image_vhd_source=$1
+data_vhd_source=$2
+
+if [ -z $image_vhd_source ];then
     echo "missing VHD source"
+    exit 1
+fi
+
+if [ -z $data_vhd_source ];then
+    echo "missing Data VHD source"
     exit 1
 fi
 
@@ -18,8 +25,8 @@ read_value image_container ".publish.image_container"
 
 echo ""
 echo "####"
-echo "Copying the VHD into the publishing storage account: $storage_account, container: $image_container" 
-pogo cp $vhd_source az://${storage_account}/${image_container}/ 
+echo "Copying the OS VHD into the publishing storage account: $storage_account, container: $image_container" 
+pogo cp $image_vhd_source az://${storage_account}/${image_container}/ 
 echo ""
 echo "Generating SAS key for the new VHD"
 
@@ -32,12 +39,33 @@ sas_key=$(az storage container generate-sas -n $image_container --permissions rl
 echo "SAS Key: $sas_key"
 echo ""
 
-vhd_name=$(echo $vhd_source | awk -F "/" '{print $NF}')
+image_vhd_name=$(echo $image_vhd_source | awk -F "/" '{print $NF}')
 
-publish_vhd_url=https://${storage_account}.blob.core.windows.net/${image_container}/${vhd_name}?${sas_key}
+publish_image_vhd_url=https://${storage_account}.blob.core.windows.net/${image_container}/${image_vhd_name}?${sas_key}
 
-echo "VHD Publish URL:"
-echo $publish_vhd_url
+
+echo ""
+echo "####"
+echo "Copying the Data VHD into the publishing storage account: $storage_account, container: $image_container" 
+pogo cp $data_vhd_source az://${storage_account}/${image_container}/ 
+echo ""
+echo "Generating SAS key for the new data VHD"
+
+conn="DefaultEndpointsProtocol=https;AccountName=$storage_account;AccountKey=$storage_key"
+
+data_vhd_name=$(echo $data_vhd_source | awk -F "/" '{print $NF}')
+
+publish_data_vhd_url=https://${storage_account}.blob.core.windows.net/${data_container}/${data_vhd_name}?${sas_key}
+
+
+
+
+echo ""
+echo "####"
+echo "VHDs Publish URL:"
+echo "OS Image: $publish_image_vhd_url"
+echo "Data Image: $publish_data_vhd_url"
+echo "####"
 
 
 

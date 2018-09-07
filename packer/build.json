@@ -39,7 +39,8 @@
             "vm_size":  "{{user `vm_size`}}",
             "ssh_pty": "true",
   
-            "location": "{{user `location`}}"
+            "location": "{{user `location`}}",
+            "disk_additional_size": [256]
         }
     ],
     "provisioners": [
