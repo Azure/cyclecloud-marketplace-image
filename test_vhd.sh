@@ -1,7 +1,14 @@
 #! /bin/bash
-vhd_source=$1
-if [ -z $vhd_source ];then
+image_vhd_source=$1
+data_vhd_source=$2
+
+if [ -z $image_vhd_source ];then
     echo "missing VHD source"
+    exit 1
+fi
+
+if [ -z $data_vhd_source ];then
+    echo "missing Data VHD source"
     exit 1
 fi
 
@@ -24,20 +31,27 @@ az login --service-principal \
     --output table
 
 tmpgroup="packertest-"$(date | md5sum | cut -c 1-10)
-echo $tmpgroup
 az group create -n $tmpgroup --location $location
 
 az image create \
     --name ${tmpgroup}-cc \
     --resource-group $tmpgroup \
-    --source $vhd_source \
+    --source $image_vhd_source \
     --os-type Linux \
     --location $location \
     --output table
+
+az disk create -g $tmpgroup \
+   --name ${tmpgroup}-cc-data-disk \
+   --source $data_vhd_source
+
+disk_id=$(az disk show -g $tmpgroup -n ${tmpgroup}-cc-data-disk --query 'id' | tr -d '"')
 
 az vm create \
    --resource-group $tmpgroup \
    --name ${tmpgroup}-cc-vm \
    --image ${tmpgroup}-cc \
+   --attach-data-disks $disk_id \
    --admin-username azureuser \
    --ssh-key-value ~/.ssh/id_rsa.pub
+
