@@ -55,7 +55,7 @@ conn="DefaultEndpointsProtocol=https;AccountName=$storage_account;AccountKey=$st
 
 data_vhd_name=$(echo $data_vhd_source | awk -F "/" '{print $NF}')
 
-publish_data_vhd_url=https://${storage_account}.blob.core.windows.net/${data_container}/${data_vhd_name}?${sas_key}
+publish_data_vhd_url=https://${storage_account}.blob.core.windows.net/${image_container}/${data_vhd_name}?${sas_key}
 
 
 
