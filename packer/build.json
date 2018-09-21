@@ -40,7 +40,7 @@
             "ssh_pty": "true",
   
             "location": "{{user `location`}}",
-            "disk_additional_size": [256]
+            "disk_additional_size": [128]
         }
     ],
     "provisioners": [
