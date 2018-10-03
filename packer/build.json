@@ -26,9 +26,9 @@
             "client_id": "{{user `client_id`}}",
             "client_secret": "{{user `client_secret`}}",
   
-			"image_publisher": "{{user `image_publisher`}}",
-			"image_offer": "{{user `image_offer`}}",
-			"image_sku": "{{user `image_sku`}}",
+	    "image_publisher": "{{user `image_publisher`}}",
+	    "image_offer": "{{user `image_offer`}}",
+	    "image_sku": "{{user `image_sku`}}",
 
             "resource_group_name": "{{user `resource_group`}}",
             "storage_account": "{{user `storage_account`}}",

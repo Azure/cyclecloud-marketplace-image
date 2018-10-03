@@ -22,11 +22,18 @@ function read_value {
 read_value storage_account ".publish.storage_account"
 read_value storage_key ".publish.storage_key"
 read_value image_container ".publish.image_container"
+read_value source_storage_key ".build.storage_key"
 
 echo ""
 echo "####"
 echo "Copying the OS VHD into the publishing storage account: $storage_account, container: $image_container" 
-pogo cp $image_vhd_source az://${storage_account}/${image_container}/ 
+
+image_vhd_name=$(echo $image_vhd_source | awk -F "/" '{print $NF}')
+image_destination_url=https://${storage_account}.blob.core.windows.net/${image_container}/${image_vhd_name}
+
+azcopy --source-key $source_storage_key --dest-key $storage_key  --source $image_vhd_source --destination $image_destination_url
+
+#pogo cp $image_vhd_source az://${storage_account}/${image_container}/ 
 echo ""
 echo "Generating SAS key for the new VHD"
 
@@ -39,21 +46,23 @@ sas_key=$(az storage container generate-sas -n $image_container --permissions rl
 echo "SAS Key: $sas_key"
 echo ""
 
-image_vhd_name=$(echo $image_vhd_source | awk -F "/" '{print $NF}')
-
 publish_image_vhd_url=https://${storage_account}.blob.core.windows.net/${image_container}/${image_vhd_name}?${sas_key}
 
 
 echo ""
 echo "####"
 echo "Copying the Data VHD into the publishing storage account: $storage_account, container: $image_container" 
-pogo cp $data_vhd_source az://${storage_account}/${image_container}/ 
+
+data_vhd_name=$(echo $data_vhd_source | awk -F "/" '{print $NF}')
+data_vhd_destination_url=https://${storage_account}.blob.core.windows.net/${image_container}/${data_vhd_name}
+
+azcopy --source-key $source_storage_key --dest-key $storage_key  --source $data_vhd_source --destination $data_vhd_destination_url
+#pogo cp $data_vhd_source az://${storage_account}/${image_container}/ 
+
 echo ""
 echo "Generating SAS key for the new data VHD"
 
 conn="DefaultEndpointsProtocol=https;AccountName=$storage_account;AccountKey=$storage_key"
-
-data_vhd_name=$(echo $data_vhd_source | awk -F "/" '{print $NF}')
 
 publish_data_vhd_url=https://${storage_account}.blob.core.windows.net/${image_container}/${data_vhd_name}?${sas_key}
 
@@ -66,7 +75,5 @@ echo "VHDs Publish URL:"
 echo "OS Image: $publish_image_vhd_url"
 echo "Data Image: $publish_data_vhd_url"
 echo "####"
-
-
 
 
