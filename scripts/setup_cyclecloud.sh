@@ -10,10 +10,9 @@ parted -a optimal /dev/disk/azure/scsi1/lun0 mkpart primary 0% 100%
 sleep 10s
 mkfs -t xfs /dev/disk/azure/scsi1/lun0-part1
 disk_uuid=$(blkid -o value -s UUID  /dev/disk/azure/scsi1/lun0-part1)
-mkdir /mnt/cycle_server
-echo "UUID=$disk_uuid /mnt/cycle_server xfs defaults,nofail 1 2" >> /etc/fstab
+mkdir /opt/cycle_server
+echo "UUID=$disk_uuid /opt/cycle_server xfs defaults,nofail 1 2" >> /etc/fstab
 mount -a
-ln -s /mnt/cycle_server /opt/
 
 _tmpdir=$(mktemp -d)
 pushd $_tmpdir
