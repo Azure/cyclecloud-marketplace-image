@@ -1,8 +1,8 @@
 #! /bin/bash
-image_vhd_source=$1
+os_vhd_source=$1
 data_vhd_source=$2
 
-if [ -z $image_vhd_source ];then
+if [ -z $os_vhd_source ];then
     echo "missing VHD source"
     exit 1
 fi
@@ -11,6 +11,13 @@ if [ -z $data_vhd_source ];then
     echo "missing Data VHD source"
     exit 1
 fi
+
+echo ""
+echo "Testing VHDs: "
+echo "OS_VHD_SOURCE=$os_vhd_source"
+echo "DATA_VHD_SOURCE=$data_vhd_source"
+echo ""
+
 
 config_file=config.json
 
@@ -36,7 +43,7 @@ az group create -n $tmpgroup --location $location
 az image create \
     --name ${tmpgroup}-cc \
     --resource-group $tmpgroup \
-    --source $image_vhd_source \
+    --source $os_vhd_source \
     --os-type Linux \
     --location $location \
     --output table
@@ -47,9 +54,20 @@ az disk create -g $tmpgroup \
 
 disk_id=$(az disk show -g $tmpgroup -n ${tmpgroup}-cc-data-disk --query 'id' | tr -d '"')
 
+az network nsg create -g $tmpgroup -n ${tmpgroup}-nsg 
+
+az network nsg rule create -g $tmpgroup \
+                           --nsg-name ${tmpgroup}-nsg \
+                           --name ${tmpgroup}-nsg-web \
+                           --access Allow \
+                           --destination-port-ranges 22 80 443 \
+                           --direction Inbound \
+                           --priority 101
+
 az vm create \
    --resource-group $tmpgroup \
    --name ${tmpgroup}-cc-vm \
+   --nsg ${tmpgroup}-nsg \
    --image ${tmpgroup}-cc \
    --attach-data-disks $disk_id \
    --admin-username azureuser \
