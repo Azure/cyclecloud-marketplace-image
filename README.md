@@ -1,11 +1,13 @@
 # Building a distributing a marketplace image for CycleCloud
 
 The process for publishing a new image in Marketplace is:
-1. Create an image from a VM with CycleCloud installed
-2. Copy that image VHD to the storage account linked to the marketplace publisher account
-3. Go to the Cloud Partner Portal to update the artifact
+1. Create a VM with an attached managed disk and install CycleCloud into the disk
+2. Capture the VHD for the OS image and the managed disk
+3. Launch and test a new VM usig both VHDs
+4. Copy both VHDs to the storage account linked to the marketplace publisher account
+5. Go to the Cloud Partner Portal to update the artifact
 
-The scripts in this repo use packer to build an image. The image is then tested, and the VHD copied to the publishing storage account. The packer process and the deployment of the test VM is scripted, but not the VHD transfer.
+The scripts in this repo use packer to build the images. These are then tested and the VHDs copied to the publishing storage account. The packer process, the deployment of the test VM, and the VHD transfer are scripted. 
 
 The Marketplace publishing guideline recommends that a separate subscription is used to hold the marketplace-linked VHDs, and that this subscription should not be used for anything else besides holding the storage account. 
 
@@ -14,7 +16,7 @@ The Marketplace publishing guideline recommends that a separate subscription is 
 
 ## Pre-requisites
 
-These scripts below require that you have the following installed and in your PATH
+The scripts used require the following installed in your PATH
 
 1. jq 
 2. packer
@@ -29,7 +31,7 @@ You should also have a config.json file in this directory. This json file has th
     "subscription_id": "PM-Subscription-Used-By-Packer", 
     "location": "eastus",
     "cyclecloud_installer_url": "https://cyclecloudarm.blob.core.windows.net/cyclecloudrelease",
-    "cyclecloud_version": "7.5.1",
+    "cyclecloud_version": "7.6.0",
     "packer": {
         "executable": "packer"
     },
@@ -62,6 +64,9 @@ You should also have a config.json file in this directory. This json file has th
 
 ## Steps
 1. Edit or create config.json
+  - Replace cyclecloud_version with the version to be pushed
+  - fill in the service principal used for the packer build
+  - fill in the storage_key for the Marketplace Storage Account
 
 2. Run the build script. This launches the packer process
 
@@ -69,20 +74,22 @@ You should also have a config.json file in this directory. This json file has th
     ./build_image.sh
     ```
 
-3. Test the images using the VHD_URL:
+    - The script will output the OS_VHD_URL and DATA_VHD_URL
 
-The build script outputs a URL for the VHD. To test the VHD, provide it as an input to the test script:
+3. Test the images using the VHD URLs:
+
+The build script outputs the URLs for the VHDs. To test the VHDs, provide them as input to the test script:
     ```
-    ./test_vhd.sh ${VHD_URL}
+    ./test_vhd.sh ${OS_VHD_URL} ${DATA_VHD_URL}
     ```
 
-3. Copy VHD to azure marketplace storage account
+3. Copy VHDs to azure marketplace storage account
 The target storage account is the one that is actually used for publishing. 
 After verifying that the test VM using the VHD is working, copy it to the storage account for publishing:
     ```
-    ./deploy_vhd.sh ${VHD_URL}
+    ./deploy_vhd.sh ${OS_VHD_URL} ${DATA_VHD_URL}
     ```
-
-4. Go to the [publishing portal](https://cloudpartner.azure.com), update the SKU with a new version
+ 
+4. Go to the [publishing portal](https://cloudpartner.azure.com), update the SKU with a new version and VHD artifacts
 
 

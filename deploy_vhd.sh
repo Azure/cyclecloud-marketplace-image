@@ -1,8 +1,8 @@
 #! /bin/bash
-image_vhd_source=$1
+os_vhd_source=$1
 data_vhd_source=$2
 
-if [ -z $image_vhd_source ];then
+if [ -z $os_vhd_source ];then
     echo "missing VHD source"
     exit 1
 fi
@@ -11,6 +11,14 @@ if [ -z $data_vhd_source ];then
     echo "missing Data VHD source"
     exit 1
 fi
+
+
+echo ""
+echo "Deploying VHDs: "
+echo "OS_VHD_SOURCE=$os_vhd_source"
+echo "DATA_VHD_SOURCE=$data_vhd_source"
+echo ""
+
 
 config_file=config.json
 
@@ -28,12 +36,11 @@ echo ""
 echo "####"
 echo "Copying the OS VHD into the publishing storage account: $storage_account, container: $image_container" 
 
-image_vhd_name=$(echo $image_vhd_source | awk -F "/" '{print $NF}')
+image_vhd_name=$(echo $os_vhd_source | awk -F "/" '{print $NF}')
 image_destination_url=https://${storage_account}.blob.core.windows.net/${image_container}/${image_vhd_name}
 
-azcopy --source-key $source_storage_key --dest-key $storage_key  --source $image_vhd_source --destination $image_destination_url
+azcopy --source-key $source_storage_key --dest-key $storage_key  --source $os_vhd_source --destination $image_destination_url
 
-#pogo cp $image_vhd_source az://${storage_account}/${image_container}/ 
 echo ""
 echo "Generating SAS key for the new VHD"
 

@@ -86,9 +86,27 @@ fi
 
 
 # get vhd source from the packer output
-vhd_source="$(grep -Po '(?<=OSDiskUri\: )[^$]*' $packer_log)"
+os_vhd_source="$(grep -Po '(?<=OSDiskUri\: )[^$]*' $packer_log)"
+data_vhd_source="$(grep -Po '(?<=AdditionalDiskUri \(datadisk-1\)\: )[^$]*' $packer_log)"
 
-echo $vhd_source 
 
+echo ""
+echo ""
+echo "#################################"
+echo ""
+echo "Packer log file: $packer_log"
+echo ""
+echo "To complete the deploy process set the environment variables:"
+echo "OS_VHD_URL=$os_vhd_source"
+echo "DATA_VHD_URL=$data_vhd_source"
+echo ""
+echo "Test the images:"
+echo "./test_vhd.sh \${OS_VHD_URL} \${DATA_VHD_URL}"
+echo ""
+echo "Deploy to the publishing account:"
+echo "./deploy_vhd.sh \${OS_VHD_URL} \${DATA_VHD_URL}"
+echo ""
+echo "#################################"
+echo $os_vhd_source 
 echo $packer_log
 
