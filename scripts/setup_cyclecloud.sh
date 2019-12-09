@@ -1,7 +1,15 @@
 #!/bin/bash
 set -ex
 yum -y update --security
-yum install -y java-1.8.0-openjdk-headless 
+
+
+cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
+[cyclecloud]
+name=cyclecloud
+baseurl=https://packages.microsoft.com/yumrepos/cyclecloud
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
 
 # mount data disk
 parted /dev/disk/azure/scsi1/lun0 --script -- mklabel gpt
@@ -19,25 +27,18 @@ pushd $_tmpdir
 
 CS_ROOT=/opt/cycle_server
 
-CYCLECLOUD_INSTALL_FILE_URL=${CYCLECLOUD_INSTALLER_URL}/${CYCLECLOUD_VERSION}/cyclecloud-${CYCLECLOUD_VERSION}-linux64.tar.gz
+yum -y install cyclecloud
 
-# Download the installer and install
-if curl --output /dev/null --silent --head --fail "$CYCLECLOUD_INSTALL_FILE_URL"; then
-    echo "Downloading CycleCloud installer from $CYCLECLOUD_INSTALL_FILE_URL"
-    curl -f -L -S -o cylecloud-linux64.tar.gz "$CYCLECLOUD_INSTALL_FILE_URL"
-    tar -xf cylecloud-linux64.tar.gz
-    ./cycle_server/install.sh --installdir $CS_ROOT --nostart
-else
-  echo "Installer URL invalid does not exist: $CYCLECLOUD_INSTALL_FILE_URL"
-  exit 1
-fi
+/opt/cycle_server/cycle_server await_startup
+
+systemctl stop cycle_server
 
 # Extract and install the CLI:
-unzip cycle_server/tools/cyclecloud-cli.zip
+
+unzip $CS_ROOT/tools/cyclecloud-cli.zip
 pushd cyclecloud-cli-installer
 ./install.sh --system
 popd 
-
 
 
 # Update properties
