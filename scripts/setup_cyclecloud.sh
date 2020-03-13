@@ -47,6 +47,18 @@ sed -i 's/webServerPort\=8080/webServerPort\=80/' $CS_ROOT/config/cycle_server.p
 sed -i 's/webServerSslPort\=8443/webServerSslPort\=443/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerEnableHttps\=false/webServerEnableHttps=true/' $CS_ROOT/config/cycle_server.properties
 
+
+# create a data record to identify this installation as a Marketplace VM
+cat > /opt/cycle_server/config/data/dist_method.txt <<EOF
+Category = "system"
+Status = "internal"
+AdType = "Application.Setting"
+Description = "CycleCloud distribution method e.g. marketplace, container, manual."
+Value = "marketplace"
+Name = "distribution_method"
+EOF
+
+
 # Clenaup install dir
 popd
 rm -rf $_tmpdir
