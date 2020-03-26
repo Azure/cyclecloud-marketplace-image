@@ -91,7 +91,7 @@ fi
 os_vhd_source="$(grep -Po '(?<=OSDiskUri\: )[^$]*' $packer_log)"
 data_vhd_source="$(grep -Po '(?<=AdditionalDiskUri \(datadisk-1\)\: )[^$]*' $packer_log)"
 
-
+set +x
 echo ""
 echo ""
 echo "#################################"
@@ -109,6 +109,4 @@ echo "Deploy to the publishing account:"
 echo "./deploy_vhd.sh \${OS_VHD_URL} \${DATA_VHD_URL}"
 echo ""
 echo "#################################"
-echo $os_vhd_source 
-echo $packer_log
 
