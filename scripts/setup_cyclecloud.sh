@@ -29,7 +29,20 @@ CS_ROOT=/opt/cycle_server
 
 yum -y install cyclecloud
 
+# create a data record to identify this installation as a Marketplace VM
+cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
+AdType = "Application.Setting"
+Name = "site_id"
+Value = "marketplace"
+
+AdType = "Application.Setting"
+Name = "distribution_method"
+Value = "marketplace"
+EOF
+
 /opt/cycle_server/cycle_server await_startup
+
+/opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
 systemctl stop cycle_server
 
@@ -40,23 +53,11 @@ pushd cyclecloud-cli-installer
 ./install.sh --system
 popd 
 
-
 # Update properties
 sed -i 's/webServerMaxHeapSize\=2048M/webServerMaxHeapSize\=4096M/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerPort\=8080/webServerPort\=80/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerSslPort\=8443/webServerSslPort\=443/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerEnableHttps\=false/webServerEnableHttps=true/' $CS_ROOT/config/cycle_server.properties
-
-
-# create a data record to identify this installation as a Marketplace VM
-cat > /opt/cycle_server/config/data/dist_method.txt <<EOF
-Category = "system"
-Status = "internal"
-AdType = "Application.Setting"
-Description = "CycleCloud distribution method e.g. marketplace, container, manual."
-Value = "marketplace"
-Name = "distribution_method"
-EOF
 
 
 # Clenaup install dir
