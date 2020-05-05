@@ -2,6 +2,9 @@
 set -ex
 yum -y update --security
 
+# Adding dnsmasq for helping with locked-down installs
+yum install -y dnsmasq
+
 
 cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
 [cyclecloud]
