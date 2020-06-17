@@ -1,9 +1,9 @@
 #!/bin/bash
 set -ex
-yum -y update --security
+dnf -y update --security
 
 # Adding dnsmasq for helping with locked-down installs
-yum install -y dnsmasq
+dnf install -y dnsmasq
 
 
 cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
@@ -29,8 +29,9 @@ _tmpdir=$(mktemp -d)
 pushd $_tmpdir
 
 CS_ROOT=/opt/cycle_server
+restorecon -r /opt
 
-yum -y install cyclecloud
+dnf -y install cyclecloud8
 
 # create a data record to identify this installation as a Marketplace VM
 cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
@@ -46,8 +47,6 @@ EOF
 /opt/cycle_server/cycle_server await_startup
 
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
-
-systemctl stop cycle_server
 
 # Extract and install the CLI:
 
@@ -66,3 +65,5 @@ sed -i 's/webServerEnableHttps\=false/webServerEnableHttps=true/' $CS_ROOT/confi
 # Clenaup install dir
 popd
 rm -rf $_tmpdir
+
+systemctl stop cycle_server
