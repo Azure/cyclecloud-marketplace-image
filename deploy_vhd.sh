@@ -2,6 +2,12 @@
 os_vhd_source=$1
 data_vhd_source=$2
 
+logfile=vhd_deploy.$(date +%s).log
+
+exec &> >(tee -a "$logfile")
+echo "This will be logged to the file and to the screen"
+
+
 if [ -z $os_vhd_source ];then
     echo "missing VHD source"
     exit 1
