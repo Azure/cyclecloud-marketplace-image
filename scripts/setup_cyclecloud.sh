@@ -5,6 +5,19 @@ yum -y update --security
 # Adding dnsmasq for helping with locked-down installs
 yum install -y dnsmasq
 
+# install AZ CLI
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+cat > /etc/yum.repos.d/azure-cli.repo <<EOF
+[azure-cli]
+name=Azure CLI
+baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
+
+yum install -y azure-cli
+
 
 cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
 [cyclecloud]
