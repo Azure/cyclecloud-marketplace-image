@@ -1,0 +1,30 @@
+{
+    "subscription_id": ""
+    "location": "eastus",
+    "packer": {
+        "executable": "packer"
+    },
+    "service_principal": {
+        "name": "cyclecloud_mrktpl_image_builder",
+        "tenant_id":      "",
+        "application_id": "",
+        "password":       "",
+    },
+    "publish": {
+        "resource_group": "cyclecloud_mrktpl_storage_account",
+        "storage_account": "azurecyclecloudmrktpl",
+        "image_container": "imagevhds",
+        "storage_key": "",
+    },
+    "build": {
+        "resource_group": "cyclecloud_mrktpl_image_builder",
+        "storage_account": "cyclecloudimagebuilder",
+        "storage_key": "",
+        "blob_container": "imagevhds",
+        "image_name": "centos",
+        "image_publisher": "OpenLogic",
+        "image_offer": "CentOS",
+        "image_sku": "7_9",
+        "vm_size": "Standard_D2s_v3"
+    }
+}
