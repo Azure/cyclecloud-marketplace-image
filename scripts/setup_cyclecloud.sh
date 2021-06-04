@@ -60,6 +60,15 @@ EOF
 
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
+# CRITICAL: DO THIS IMMEDIATELY BEFORE STOPPING CC and BAKING
+# Cleanup initial shared cyclecloud creds
+# If this step fails, the image may be baked with fixed credetials for ALL USERS!
+# Do NOT restart CycleCloud after this step or credentials may be regenerated
+
+rm -f /opt/cycle_server/.ssh/*
+/opt/cycle_server/cycle_server execute 'delete from AuthenticatedUser'
+/opt/cycle_server/cycle_server execute 'delete from Credential'
+
 systemctl stop cycle_server
 
 # Extract and install the CLI:
