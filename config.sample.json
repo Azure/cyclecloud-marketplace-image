@@ -1,6 +1,7 @@
 {
     "subscription_id": ""
     "location": "eastus",
+    "cyclecloud_version": "7.9.9",
     "packer": {
         "executable": "packer"
     },
@@ -21,7 +22,7 @@
         "storage_account": "cyclecloudimagebuilder",
         "storage_key": "",
         "blob_container": "imagevhds",
-        "image_name": "centos",
+        "image_name": "centos79",
         "image_publisher": "OpenLogic",
         "image_offer": "CentOS",
         "image_sku": "7_9",
