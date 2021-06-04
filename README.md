@@ -89,7 +89,10 @@ After verifying that the test VM using the VHD is working, copy it to the storag
     ```
     ./deploy_vhd.sh ${OS_VHD_URL} ${DATA_VHD_URL}
     ```
- 
-4. Go to the [publishing portal](https://cloudpartner.azure.com), update the SKU with a new version and VHD artifacts
+
+4. Go to the [publishing portal](https://partner.microsoft.com/en-us/dashboard/commercial-marketplace/overview), update the SKU with a new version and VHD artifacts
+
+5. See [CycleCloud Publishing](https://microsoft.sharepoint.com/:w:/t/CycleEngineeringTeam/EYORK6cI7ExGrFHGXIrOHrAB5WNvPRaOkq0VBiM0bD4-WA?e=pMBt6l) for
+details on how to use the Marketplace Portal.
 
 
