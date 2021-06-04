@@ -16,20 +16,6 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 
-yum install -y azure-cli
-
-
-# install AZ CLI
-rpm --import https://packages.microsoft.com/keys/microsoft.asc
-cat > /etc/yum.repos.d/azure-cli.repo <<EOF
-[azure-cli]
-name=Azure CLI
-baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-EOF
-
 dnf install -y azure-cli
 
 cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
@@ -73,6 +59,15 @@ EOF
 /opt/cycle_server/cycle_server await_startup
 
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
+
+# CRITICAL: DO THIS IMMEDIATELY BEFORE STOPPING CC and BAKING
+# Cleanup initial shared cyclecloud creds
+# If this step fails, the image may be baked with fixed credetials for ALL USERS!
+# Do NOT restart CycleCloud after this step or credentials may be regenerated
+
+rm -f /opt/cycle_server/.ssh/*
+/opt/cycle_server/cycle_server execute 'delete from AuthenticatedUser'
+/opt/cycle_server/cycle_server execute 'delete from Credential'
 
 # Extract and install the CLI:
 
