@@ -1,6 +1,7 @@
 {
     "subscription_id": ""
     "location": "eastus",
+    "cyclecloud_version": "8.1.1",
     "packer": {
         "executable": "packer"
     },
@@ -21,10 +22,10 @@
         "storage_account": "cyclecloudimagebuilder",
         "storage_key": "",
         "blob_container": "imagevhds",
-        "image_name": "centos",
+        "image_name": "centos82",
         "image_publisher": "OpenLogic",
         "image_offer": "CentOS",
-        "image_sku": "7_9",
+        "image_sku": "8_2",
         "vm_size": "Standard_D2s_v3"
     }
 }
