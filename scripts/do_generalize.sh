@@ -36,8 +36,8 @@ set +e
 set -e
 
 echo "Clearing cyclecloud pem..."
-rm -f /opt/cycle_server/.ssh/*
-rm -f /opt/cycle_server/logs/*
+rm -rf /opt/cycle_server/.ssh/*
+rm -rf /opt/cycle_server/logs/*
 
 echo "Generalize completed."
 if ls -l /opt/cycle_server/.ssh/*.pem; then
