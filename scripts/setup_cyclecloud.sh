@@ -81,6 +81,11 @@ chmod a+x /tmp/do_generalize.sh
 yes | /tmp/do_generalize.sh
 systemctl stop cycle_server
 
+if ls -l /opt/cycle_server/.ssh/*.pem; then
+   echo "WARNING: Failed to generalize!" >&2
+   exit -1
+fi
+
 # Clenaup install dir
 popd
 rm -rf $_tmpdir

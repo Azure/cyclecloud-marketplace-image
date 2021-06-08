@@ -31,7 +31,17 @@ EOF
 echo "Stopping CycleCloud..."
 echo "WARNING: If you restart CycleCloud after this point, re-run generalize.sh before baking an image or container"
 /opt/cycle_server/cycle_server stop
+set +e
 /opt/cycle_server/cycle_server status
+set -e
+
+echo "Clearing cyclecloud pem..."
 rm -f /opt/cycle_server/.ssh/*
 rm -f /opt/cycle_server/logs/*
+
+echo "Generalize completed."
+if ls -l /opt/cycle_server/.ssh/*.pem; then
+   echo "WARNING: Failed to generalize!" >&2
+   exit -1
+fi
 
