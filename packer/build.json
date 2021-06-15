@@ -59,7 +59,7 @@
             "inline": [
                 "set -e",
                 "chmod +x /tmp/setup_cyclecloud.sh",
-                "/tmp/setup_cyclecloud.sh",
+                "/tmp/setup_cyclecloud.sh {{user `cyclecloud_version`}}",
                 "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
             ],
             "environment_vars": [
