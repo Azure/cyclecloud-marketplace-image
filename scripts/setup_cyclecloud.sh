@@ -1,5 +1,10 @@
 #!/bin/bash
 set -ex
+
+# We tag the Distribution with MP Image Version string to differentiate multiple Marketplace
+# image builds of the same (or different) CycleCloud Releases in telemetry
+CC_MARKETPLACE_VERSION=${1}
+
 yum -y update --security
 
 # Adding dnsmasq for helping with locked-down installs
@@ -53,7 +58,7 @@ Value = "marketplace"
 
 AdType = "Application.Setting"
 Name = "distribution_method"
-Value = "marketplace"
+Value = "marketplace:${CC_MARKETPLACE_VERSION}"
 EOF
 
 /opt/cycle_server/cycle_server await_startup
