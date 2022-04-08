@@ -1,5 +1,15 @@
 # Building a distributing a marketplace image for CycleCloud
 
+## Disclaimer
+
+The scripts in this repository are provided "as is" without any support from Microsoft, or CycleCloud.
+
+This only serves as an example of how to build a CycleCloud image with Packer.
+
+See LICENSE for further information.
+
+## Introduction
+
 The process for publishing a new image in Marketplace is:
 1. Create a VM with an attached managed disk and install CycleCloud into the disk
 2. Capture the VHD for the OS image and the managed disk
