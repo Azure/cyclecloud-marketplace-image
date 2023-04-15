@@ -65,7 +65,7 @@ You should also have a config.json file in this directory. This json file has th
         "resource_group": "cyclecloud_mrktpl_storage_account",
         "storage_account": "azurecyclecloudmrktpl",
         "image_container": "imagevhds",
-        ""storage_key": "ACCESSKEY-For-StorageAccount",
+        "storage_key": "ACCESSKEY-For-StorageAccount",
     }
 }
 
