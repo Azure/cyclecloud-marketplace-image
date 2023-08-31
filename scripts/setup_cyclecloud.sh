@@ -32,6 +32,9 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 
+# show available disks
+tree /dev/disk/azure
+
 # mount data disk
 parted /dev/disk/azure/scsi1/lun0 --script -- mklabel gpt
 parted -a optimal /dev/disk/azure/scsi1/lun0 mkpart primary 0% 100%
@@ -47,8 +50,16 @@ _tmpdir=$(mktemp -d)
 pushd $_tmpdir
 
 CS_ROOT=/opt/cycle_server
+export CS_HOME=${CS_ROOT}
 
-yum -y install cyclecloud
+# Configure SELinux to allow CycleCloud to run from non-standard bin directory
+chcon -R -t bin_t ${CS_HOME}
+semanage fcontext -a -t bin_t "${CS_HOME}(/.*)?"
+restorecon -r -v ${CS_HOME}
+
+# explicitly install java 8 before cyclecloud (to ensure environment is set)
+yum -y install java-1.8.0-openjdk-headless
+yum -y install cyclecloud8
 
 # create a data record to identify this installation as a Marketplace VM
 cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
@@ -69,6 +80,7 @@ EOF
 
 unzip $CS_ROOT/tools/cyclecloud-cli.zip
 pushd cyclecloud-cli-installer
+cp /tmp/install_cli.py ./install.py   # Monkeypatch the installer with pip update for python 3.6.0
 ./install.sh --system
 popd 
 
@@ -94,3 +106,4 @@ fi
 # Clenaup install dir
 popd
 rm -rf $_tmpdir
+

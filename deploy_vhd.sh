@@ -1,28 +1,19 @@
 #! /bin/bash
-os_vhd_source=$1
-data_vhd_source=$2
+managed_image_id=$1
 
-logfile=vhd_deploy.$(date +%s).log
+logfile=image_deploy.$(date +%s).log
 
 exec &> >(tee -a "$logfile")
 echo "This will be logged to the file and to the screen"
 
-
-if [ -z $os_vhd_source ];then
-    echo "missing VHD source"
+if [ -z $managed_image_id ];then
+    echo "missing Managed Image resource id"
     exit 1
 fi
-
-if [ -z $data_vhd_source ];then
-    echo "missing Data VHD source"
-    exit 1
-fi
-
 
 echo ""
-echo "Deploying VHDs: "
-echo "OS_VHD_SOURCE=$os_vhd_source"
-echo "DATA_VHD_SOURCE=$data_vhd_source"
+echo "Deploying Image: "
+echo "OS_IMAGE_RESOURCE_ID=$managed_image_id"
 echo ""
 
 
