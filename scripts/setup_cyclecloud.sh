@@ -61,6 +61,13 @@ restorecon -r -v ${CS_HOME}
 yum -y install java-1.8.0-openjdk-headless
 yum -y install cyclecloud8
 
+# Update python to 3.9 or later for latest openssl and cryptography support
+# Required for CycleCloud CLI
+yum -y install python39 python39-pip
+alternatives --set python /usr/bin/python3.9
+alternatives --set python3 /usr/bin/python3.9
+python3 -m pip install --upgrade pip
+
 # create a data record to identify this installation as a Marketplace VM
 cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
 AdType = "Application.Setting"
@@ -74,14 +81,19 @@ EOF
 
 /opt/cycle_server/cycle_server await_startup
 
+# Configure CycleCloud as a system service
+/opt/cycle_server/system/scripts/autostart.sh
+systemctl daemon-reload
+
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
 # Extract and install the CLI:
 
-unzip $CS_ROOT/tools/cyclecloud-cli.zip
+#unzip $CS_ROOT/tools/cyclecloud-cli.zip
+tar xzf $CS_ROOT/tools/cyclecloud-cli-linux-amd64.tar.gz
 pushd cyclecloud-cli-installer
-cp /tmp/install_cli.py ./install.py   # Monkeypatch the installer with pip update for python 3.6.0
-./install.sh --system
+#./install.sh --system
+./install.sh -y
 popd 
 
 # Update properties

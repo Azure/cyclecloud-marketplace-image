@@ -18,7 +18,7 @@ source "azure-arm" "cyclecloud_builder" {
   image_sku = "${var.image_sku}"
 
   subscription_id = "${var.subscription_id}"
-  managed_image_name = "cc-${var.cyclecloud_version}-${var.image_name}"
+  managed_image_name = "cc-${var.cyclecloud_version}-${var.image_name}-${formatdate("YYYYMMDDhhmm", timestamp())}"
   managed_image_resource_group_name = "${var.resource_group}"
 
   azure_tags = {

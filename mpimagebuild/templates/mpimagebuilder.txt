@@ -21,6 +21,9 @@ Category = Infrastructure
     MachineType = $MachineType
     IsReturnProxy = $ReturnProxy
     AdditionalClusterInitSpecs = $ClusterInitSpecs
+
+        [[[volume boot]]]
+        Size = 64
     
         [[[network-interface eth0]]]
         AssociatePublicIpAddress = $UsePublicNetwork

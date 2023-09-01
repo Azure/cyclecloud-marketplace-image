@@ -4,3 +4,4 @@ build.pwd
 build.hwm
 packer-output*.log
 vhd_deploy.*.log
+mpimagebuild/build*
