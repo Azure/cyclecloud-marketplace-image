@@ -1,0 +1,117 @@
+
+################################
+## Cluster Configuration File ##
+################################
+
+[cluster mpimagebuilder]
+IconUrl = static/cloud/cluster/ui/ClusterIcon/microsoft.png
+FormLayout = selectionpanel
+Category = Infrastructure
+
+    [[node defaults]]
+    UsePublicNetwork = $UsePublicNetwork
+    Credentials = $Credentials    
+    ImageName = $ImageName
+    SubnetId = $SubnetId
+    Region = $Region
+    KeyPairLocation = ~/.ssh/cyclecloud.pem
+    Azure.Identities = $ManagedIdentity
+
+    [[node builder]]
+    MachineType = $MachineType
+    IsReturnProxy = $ReturnProxy
+    AdditionalClusterInitSpecs = $ClusterInitSpecs
+
+        [[[volume boot]]]
+        Size = 64
+    
+        [[[network-interface eth0]]]
+        AssociatePublicIpAddress = $UsePublicNetwork
+
+        [[[input-endpoint ganglia]]]
+        PrivatePort = 8652
+        PublicPort = 8652
+
+[parameters About]
+Order = 1
+
+    [[parameters About]]
+
+        [[[parameter single-vm]]]
+        HideLabel = true
+        Config.Plugin = pico.widget.HtmlTemplateWidget
+        Config.Template := "<p>The Single VM cluster type is just a singular VM meant for development and testing of cluster-init projects as well as a starting point for other applications. </p>"
+
+[parameters Required Settings]
+Order = 10
+
+    [[parameters Virtual Machines]]
+    Description = "Configure which VM type to use based on the requirements of your application."
+    Order = 20
+
+        [[[parameter Region]]]
+        Label = Region
+        Description = Deployment Location
+        ParameterType = Cloud.Region
+
+        [[[parameter MachineType]]]
+        Label = VM Type
+        Description = The VM type for node
+        ParameterType = Cloud.MachineType
+        DefaultValue = Standard_D4ads_v5
+
+    [[parameters Networking]]
+    Order = 40
+
+        [[[parameter SubnetId]]]
+        Label = Subnet ID
+        Description = Subnet Resource Path (ResourceGroup/VirtualNetwork/Subnet)
+        ParameterType = Azure.Subnet
+        Required = True
+
+
+[parameters Advanced Settings]
+Order = 20
+
+    [[parameters Azure Settings]]
+    Order = 10 
+
+        [[[parameter Credentials]]]
+        Description = The credentials for the cloud provider
+        ParameterType = Cloud.Credentials        
+
+        [[[parameter ManagedIdentity]]]
+        ParameterType = Azure.ManagedIdentity
+        Label = Managed ID
+        Description = (Optional) An Azure user assigned managed identity for the nodes, alternatively use System Assigned MI
+
+    [[parameters Software]]
+    Description = "Specify the base OS installed on all nodes, and optionally the cluster-init and chef versions from your Locker."
+    Order = 10
+
+        [[[parameter ImageName]]]
+        Label = Base OS
+        ParameterType = Cloud.Image
+        Config.OS = linux
+        DefaultValue = cycle.image.centos7
+
+        [[[parameter ClusterInitSpecs]]]
+        Label = Cluster-Init
+        DefaultValue = =undefined
+        Description = Cluster init specs to apply to the node
+        ParameterType = Cloud.ClusterInitSpecs	
+
+    [[parameters Advanced Networking]]
+    Description = Advanced networking settings
+
+        [[[parameter ReturnProxy]]]
+        Label = Return Proxy
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Use SSH tunnel to connect to CycleCloud (required if direct access is blocked)
+
+        [[[parameter UsePublicNetwork]]]
+        Label = Public Node
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Access node from the Internet
