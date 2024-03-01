@@ -115,7 +115,7 @@ cyclecloud import_template -f ./templates/mpimagebuilder.txt
 
 The build script outputs the URLs for the VHDs. To test the VHDs, provide them as input to the test script:
     ```
-    ./test_vhd.sh ${OS_IMAGE_RESOURCE_ID}
+    ./test_cc_image.sh ${OS_IMAGE_RESOURCE_ID}
     ```
 
 The test script will launch a VM and run a few cursory automated tests.
