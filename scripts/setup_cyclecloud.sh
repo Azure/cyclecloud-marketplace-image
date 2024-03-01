@@ -61,11 +61,11 @@ restorecon -r -v ${CS_HOME}
 yum -y install java-1.8.0-openjdk-headless
 yum -y install cyclecloud8
 
-# Update python to 3.9 or later for latest openssl and cryptography support
-# Required for CycleCloud CLI
-yum -y install python39 python39-pip
-alternatives --set python /usr/bin/python3.9
-alternatives --set python3 /usr/bin/python3.9
+# # Update python to 3.9 or later for latest openssl and cryptography support
+# # Required for CycleCloud CLI
+# yum -y install python39 python39-pip
+# alternatives --set python /usr/bin/python3.9
+# alternatives --set python3 /usr/bin/python3.9
 python3 -m pip install --upgrade pip
 
 # create a data record to identify this installation as a Marketplace VM

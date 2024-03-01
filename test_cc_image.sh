@@ -69,7 +69,7 @@ az vm create \
    --name ${tmpgroup}-cc-vm \
    --nsg ${tmpgroup}-nsg \
    --image ${managed_image_id} \
-   --public-ip-sku Standard \
+   --public-ip-address "" \
    --admin-username azureuser \
    --ssh-key-value ~/.ssh/id_rsa.pub
 
@@ -80,26 +80,11 @@ until [ $( az vm show -g ${tmpgroup} -n ${tmpgroup}-cc-vm | jq '.provisioningSta
     sleep 5
 done
 
+echo "VM Provisioned.  Sleeping to allow cyclecloud to start..."
+sleep 60
 
 echo "Running Automated test..."
-az vm run-command invoke -g ${tmpgroup} -n ${tmpgroup}-cc-vm --command-id RunShellScript --scripts @scripts/test_cc_vm.sh > ./test_cc_vm.json
-if [ $(cat ./test_cc_vm.json | jq '.value[0].code') != '"ProvisioningState/succeeded"']; then
-    echo "ERROR: Automated test command failed..."
-fi
-cat ./test_cc_vm.json | jq '.value[0].message'
-if ! grep -q "jsvc.exec" ./test_cc_vm.json; then
-   echo "ERROR: jsvc not found."
-fi
-if ! grep -q "ready.ready" ./test_cc_vm.json; then
-   echo "ERROR: CycleCloud not started."
-fi
-if ! grep -q "Azure CycleCloud" ./test_cc_vm.json; then
-   echo "ERROR: Failed curl to CycleCloud."
-fi
-if ! grep -q "body><\/body" ./test_cc_vm.json; then
-   echo "ERROR: CycleCloud health_monitor returned unexpected result."
-fi
-echo "Automated test passed.   See ./test_cc_vm.json for details."
+bash -c "./test_cc_vm.sh $tmpgroup ${tmpgroup}-cc-vm"
 
 echo ""
 echo "IMPORTANT: Delete the resource group after testing to avoid leaking a VM!"
