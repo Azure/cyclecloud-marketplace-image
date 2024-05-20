@@ -48,6 +48,7 @@ read_value build_image_offer ".build.image_offer"
 read_value build_image_sku ".build.image_sku"
 read_value build_vm_size ".build.vm_size"
 read_value cyclecloud_version ".cyclecloud_version"
+read_value cyclecloud_package_version ".cyclecloud_package_version"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
@@ -65,6 +66,7 @@ packer build \
     -var image_sku=$build_image_sku \
     -var vm_size=$build_vm_size \
     -var cyclecloud_version=$cyclecloud_version \
+    -var cyclecloud_package_version=$cyclecloud_package_version \
     . \
     | tee -a $packer_log
 

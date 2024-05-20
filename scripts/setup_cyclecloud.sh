@@ -5,6 +5,13 @@ set -ex
 # image builds of the same (or different) CycleCloud Releases in telemetry
 CC_MARKETPLACE_VERSION=${1}
 
+function version_less_than_850 {
+   cat << EOF | sort -V -C
+$CC_MARKETPLACE_VERSION
+8.5.0
+EOF
+}
+
 yum -y update --security
 
 # Adding dnsmasq for helping with locked-down installs
@@ -59,7 +66,7 @@ restorecon -r -v ${CS_HOME}
 
 # explicitly install java 8 before cyclecloud (to ensure environment is set)
 yum -y install java-1.8.0-openjdk-headless
-yum -y install cyclecloud8
+yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
 
 # # Update python to 3.9 or later for latest openssl and cryptography support
 # # Required for CycleCloud CLI
@@ -88,13 +95,26 @@ systemctl daemon-reload
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
 # Extract and install the CLI:
+if version_less_than_850; then
+   echo "CycleCloud version is less than 8.5.0, CLI install may be incompatible with system python"
+   # Update python to 3.9 or later for latest openssl and cryptography support
+   # Required for CycleCloud CLI
+   yum -y install python39 python39-pip
+   alternatives --set python /usr/bin/python3.9
+   alternatives --set python3 /usr/bin/python3.9
+   python3 -m pip install --upgrade pip
 
-#unzip $CS_ROOT/tools/cyclecloud-cli.zip
-tar xzf $CS_ROOT/tools/cyclecloud-cli-linux-amd64.tar.gz
-pushd cyclecloud-cli-installer
-#./install.sh --system
-./install.sh -y
-popd 
+   unzip $CS_ROOT/tools/cyclecloud-cli.zip
+   pushd cyclecloud-cli-installer
+   cp /tmp/install_cli.py ./install.py   # Monkeypatch the installer with pip update for python 3.6.0
+   ./install.sh --system
+   popd
+else
+   tar xzf $CS_ROOT/tools/cyclecloud-cli-linux-amd64.tar.gz
+   pushd cyclecloud-cli-installer
+   ./install.sh -y
+   popd 
+fi
 
 # Update properties
 sed -i 's/webServerMaxHeapSize\=2048M/webServerMaxHeapSize\=4096M/' $CS_ROOT/config/cycle_server.properties
