@@ -57,7 +57,7 @@ cat ./test_cc_vm.json | jq '.value[0].message'
 if ! grep -q "jsvc.exec" ./test_cc_vm.json; then
    echo "ERROR: jsvc not found."
 fi
-if ! grep -q "ready.ready" ./test_cc_vm.json; then
+if ! grep -q "ready[.]\+ready" ./test_cc_vm.json; then
    echo "ERROR: CycleCloud not started."
 fi
 if ! grep -q "Azure CycleCloud" ./test_cc_vm.json; then

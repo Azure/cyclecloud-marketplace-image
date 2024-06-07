@@ -12,7 +12,13 @@ $CC_MARKETPLACE_VERSION
 EOF
 }
 
+# Workaround for CVE-2023-32233 (disable user namespaces)
+echo user.max_user_namespaces=0 > /etc/sysctl.d/userns.conf
+sysctl -p /etc/sysctl.d/userns.conf
+
 yum -y update --security
+
+yum install -y tree policycoreutils-python-utils wget jq
 
 # Adding dnsmasq for helping with locked-down installs
 yum install -y dnsmasq
