@@ -128,6 +128,19 @@ sed -i 's/webServerPort\=8080/webServerPort\=80/' $CS_ROOT/config/cycle_server.p
 sed -i 's/webServerSslPort\=8443/webServerSslPort\=443/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerEnableHttps\=false/webServerEnableHttps=true/' $CS_ROOT/config/cycle_server.properties
 
+# Add Prometheus JMX exporter
+curl -o /tmp/jmx_prometheus_javaagent-1.0.1.jar 'https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/1.0.1/jmx_prometheus_javaagent-1.0.1.jar'
+echo "7d61f737fd661610ccc14aea79764faa1ea94a340cbc8f0029b3d2edea3d80c1  /tmp/jmx_prometheus_javaagent-1.0.1.jar" | sha256sum -c
+mv /tmp/jmx_prometheus_javaagent-1.0.1.jar ${CS_ROOT}/jmx_prometheus_javaagent.jar
+chown cycle_server:cycle_server ${CS_ROOT}/jmx_prometheus_javaagent.jar
+
+cat <EOF > ${CS_ROOT}/prometheus_exporter_config.yaml
+rules:
+- pattern: ".*"
+EOF
+chown cycle_server:cycle_server ${CS_ROOT}/prometheus_exporter_config.yaml
+
+
 # CRITICAL: DO THIS IMMEDIATELY BEFORE STOPPING CC and BAKING
 # Cleanup initial shared cyclecloud creds
 # If this step fails, the image may be baked with fixed credetials for ALL USERS!
