@@ -41,6 +41,9 @@ function read_value {
 read_value location ".location"
 read_value subscription_id ".subscription_id"
 read_value resource_group ".resource_group"
+read_value virtual_network_name ".virtual_network_name"
+read_value virtual_network_subnet_name ".virtual_network_subnet_name"
+read_value virtual_network_resource_group_name ".virtual_network_resource_group_name"
 
 read_value build_image_name ".build.image_name"
 read_value build_image_publisher ".build.image_publisher"
@@ -59,6 +62,9 @@ packer build \
     -var location=$location \
     -var subscription_id=$subscription_id \
     -var resource_group=$resource_group \
+    -var virtual_network_name=$virtual_network_name \
+    -var virtual_network_subnet_name=$virtual_network_subnet_name \
+    -var virtual_network_resource_group_name=$virtual_network_resource_group_name \
     -var image_name=$build_image_name \
     -var image_publisher=$build_image_publisher \
     -var image_offer=$build_image_offer \

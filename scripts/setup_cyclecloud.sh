@@ -134,7 +134,7 @@ echo "7d61f737fd661610ccc14aea79764faa1ea94a340cbc8f0029b3d2edea3d80c1  /tmp/jmx
 mv /tmp/jmx_prometheus_javaagent-1.0.1.jar ${CS_ROOT}/jmx_prometheus_javaagent.jar
 chown cycle_server:cycle_server ${CS_ROOT}/jmx_prometheus_javaagent.jar
 
-cat <EOF > ${CS_ROOT}/prometheus_exporter_config.yaml
+cat << EOF > ${CS_ROOT}/prometheus_exporter_config.yaml
 rules:
 - pattern: ".*"
 EOF

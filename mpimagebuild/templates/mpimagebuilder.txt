@@ -9,7 +9,7 @@ FormLayout = selectionpanel
 Category = Infrastructure
 
     [[node defaults]]
-    UsePublicNetwork = $UsePublicNetwork
+    UsePublicNetwork = false
     Credentials = $Credentials    
     ImageName = $ImageName
     SubnetId = $SubnetId
@@ -24,13 +24,9 @@ Category = Infrastructure
 
         [[[volume boot]]]
         Size = 64
-    
-        [[[network-interface eth0]]]
-        AssociatePublicIpAddress = $UsePublicNetwork
 
-        [[[input-endpoint ganglia]]]
-        PrivatePort = 8652
-        PublicPort = 8652
+        [[[cluster-init mpimagebuild:default:1.0.0]]]
+    
 
 [parameters About]
 Order = 1
@@ -83,7 +79,8 @@ Order = 20
         [[[parameter ManagedIdentity]]]
         ParameterType = Azure.ManagedIdentity
         Label = Managed ID
-        Description = (Optional) An Azure user assigned managed identity for the nodes, alternatively use System Assigned MI
+        Description = An Azure user assigned managed identity used to build the images
+        Required = True
 
     [[parameters Software]]
     Description = "Specify the base OS installed on all nodes, and optionally the cluster-init and chef versions from your Locker."
@@ -93,7 +90,7 @@ Order = 20
         Label = Base OS
         ParameterType = Cloud.Image
         Config.OS = linux
-        DefaultValue = cycle.image.centos7
+        DefaultValue = cycle.image.ubuntu22
 
         [[[parameter ClusterInitSpecs]]]
         Label = Cluster-Init
@@ -109,9 +106,3 @@ Order = 20
         DefaultValue = true
         ParameterType = Boolean
         Config.Label = Use SSH tunnel to connect to CycleCloud (required if direct access is blocked)
-
-        [[[parameter UsePublicNetwork]]]
-        Label = Public Node
-        DefaultValue = true
-        ParameterType = Boolean
-        Config.Label = Access node from the Internet

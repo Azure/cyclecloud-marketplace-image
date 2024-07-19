@@ -2,7 +2,7 @@ packer {
   required_plugins {
     azure = {
       source  = "github.com/hashicorp/azure"
-      version = "~> 1"
+      version = "~> 2"
     }
   }
 }
@@ -20,6 +20,10 @@ source "azure-arm" "cyclecloud_builder" {
   subscription_id = "${var.subscription_id}"
   managed_image_name = "cc-${var.cyclecloud_version}-${var.image_name}-${formatdate("YYYYMMDDhhmm", timestamp())}"
   managed_image_resource_group_name = "${var.resource_group}"
+
+  virtual_network_name = "${var.virtual_network_name}"
+  virtual_network_subnet_name = "${var.virtual_network_subnet_name}"
+  virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
 
   azure_tags = {
     imagebuilder = "cyclecloud"

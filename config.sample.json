@@ -2,6 +2,9 @@
     "location": "eastus",
     "subscription_id": "<subscription id for build and publish>",
     "resource_group": "<resource group name for build and publish>",
+    "virtual_network_name": "<existing virtual network name for build and publish>",
+    "virtual_network_subnet_name": "<existing subnet name for build and publish>",
+    "virtual_network_resource_group_name": "<resource group name for virtual network>",
     "cyclecloud_version": "8.4.1",
     "publish": {
         "image_gallery": "cyclecloud_mrktpl_image_gallery"

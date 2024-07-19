@@ -29,15 +29,27 @@ variable "image_offer" {
 
 variable "image_sku" {
   type = string
-  default = "8_7-gen2"
+  default = "8-gen2"
 }
 
 variable "vm_size" {
   type = string
-  default = "Standard_D2s_v5"
+  default = "Standard_E2ads_v5"
 }
 
 variable "cyclecloud_version" {
   type = string
 }
 
+variable "virtual_network_name" {
+  type = string
+}
+
+variable "virtual_network_subnet_name" {
+  type = string
+  default = "default"
+}
+
+variable "virtual_network_resource_group_name" {
+  type = string
+}
