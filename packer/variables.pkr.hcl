@@ -41,6 +41,10 @@ variable "cyclecloud_version" {
   type = string
 }
 
+variable "build_resource_group_name" {
+  type = string
+}
+
 variable "virtual_network_name" {
   type = string
 }

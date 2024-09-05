@@ -21,6 +21,10 @@ source "azure-arm" "cyclecloud_builder" {
   managed_image_name = "cc-${var.cyclecloud_version}-${var.image_name}-${formatdate("YYYYMMDDhhmm", timestamp())}"
   managed_image_resource_group_name = "${var.resource_group}"
 
+  # Need to use an existing RG, otherwise Packer will create a Public IP for the VM (even when using private VNet)
+  build_resource_group_name = "${var.build_resource_group_name}"
+
+  # Need to use an existing VNet, otherwise Packer will create a Public IP for the VM
   virtual_network_name = "${var.virtual_network_name}"
   virtual_network_subnet_name = "${var.virtual_network_subnet_name}"
   virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
