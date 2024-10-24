@@ -10,7 +10,7 @@ function usage(){
     me=$(basename "$0")
     echo ""
     echo "Usage:"
-    echo "$me -c config.json "
+    echo "$me -c config.json -t"
     echo "    -c: config file to use"
     echo "    -t: run tests automatically"
     echo "    -h: help"
@@ -18,7 +18,7 @@ function usage(){
 }
 
 run_tests=0
-while getopts ":t:c:h" OPTION; do
+while getopts ":tc:h" OPTION; do
     case ${OPTION} in
     c) config_file=$OPTARG
     ;;
@@ -87,7 +87,7 @@ if [ $? != 0 ]; then
     echo "ERROR: Bad exit status for packer"
     exit 1
 fi
-
+popd
 
 # get new Managed Image from the packer output
 managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' ${packer_log})"

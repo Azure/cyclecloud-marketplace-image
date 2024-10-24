@@ -12,10 +12,11 @@ See LICENSE for further information.
 
 To build a new image which replicates the CycleCloud Marketplace image:
 1. Start and configure a CycleCloud instance from Marketplace
-2. Create a User-Assigned Managed ID with permissions to create the Builder VM and Storage Blob Contributor to the CycleCloud Locker Storage Account
-3. (Optionally) Create a Compute Image Gallery to hold the built images
-4. Clone this repository
-5. Upload the mpimagebuild project to your Storage Locker
+2. Create at least one Resource Group, Virtual Network and Subnet in which to build the image
+3. Create a User-Assigned Managed ID with permissions to create the Builder VM and Storage Blob Contributor to the CycleCloud Locker Storage Account
+4. (Optionally) Create a Compute Image Gallery to hold the built images
+5. Clone this repository
+6. Upload the mpimagebuild project to your Storage Locker
 ``` bash
 cd mpimagebuilder
 cyclecloud project upload <locker_name>

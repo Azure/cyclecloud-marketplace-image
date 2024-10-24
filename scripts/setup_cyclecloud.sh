@@ -82,11 +82,7 @@ yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
 python3 -m pip install --upgrade pip
 
 # create a data record to identify this installation as a Marketplace VM
-cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
-AdType = "Application.Setting"
-Name = "site_id"
-Value = "marketplace"
-
+cat > /opt/cycle_server/config/data/marketplace_distribution.txt <<EOF
 AdType = "Application.Setting"
 Name = "distribution_method"
 Value = "marketplace:${CC_MARKETPLACE_VERSION}"
@@ -98,6 +94,7 @@ EOF
 /opt/cycle_server/system/scripts/autostart.sh
 systemctl daemon-reload
 
+# Clear the site_id
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
 # Extract and install the CLI:
