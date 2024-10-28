@@ -82,11 +82,7 @@ yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
 python3 -m pip install --upgrade pip
 
 # create a data record to identify this installation as a Marketplace VM
-cat > /opt/cycle_server/config/data/marketplace_site_id.txt <<EOF
-AdType = "Application.Setting"
-Name = "site_id"
-Value = "marketplace"
-
+cat > /opt/cycle_server/config/data/marketplace_distribution.txt <<EOF
 AdType = "Application.Setting"
 Name = "distribution_method"
 Value = "marketplace:${CC_MARKETPLACE_VERSION}"
@@ -98,6 +94,7 @@ EOF
 /opt/cycle_server/system/scripts/autostart.sh
 systemctl daemon-reload
 
+# Clear the site_id
 /opt/cycle_server/cycle_server execute 'update Application.Setting set Value = undefined where Name == "site_id" || Name == "reported_version"'
 
 # Extract and install the CLI:
@@ -127,6 +124,19 @@ sed -i 's/webServerMaxHeapSize\=2048M/webServerMaxHeapSize\=4096M/' $CS_ROOT/con
 sed -i 's/webServerPort\=8080/webServerPort\=80/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerSslPort\=8443/webServerSslPort\=443/' $CS_ROOT/config/cycle_server.properties
 sed -i 's/webServerEnableHttps\=false/webServerEnableHttps=true/' $CS_ROOT/config/cycle_server.properties
+
+# Add Prometheus JMX exporter
+curl -o /tmp/jmx_prometheus_javaagent-1.0.1.jar 'https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/1.0.1/jmx_prometheus_javaagent-1.0.1.jar'
+echo "7d61f737fd661610ccc14aea79764faa1ea94a340cbc8f0029b3d2edea3d80c1  /tmp/jmx_prometheus_javaagent-1.0.1.jar" | sha256sum -c
+mv /tmp/jmx_prometheus_javaagent-1.0.1.jar ${CS_ROOT}/jmx_prometheus_javaagent.jar
+chown cycle_server:cycle_server ${CS_ROOT}/jmx_prometheus_javaagent.jar
+
+cat << EOF > ${CS_ROOT}/prometheus_exporter_config.yaml
+rules:
+- pattern: ".*"
+EOF
+chown cycle_server:cycle_server ${CS_ROOT}/prometheus_exporter_config.yaml
+
 
 # CRITICAL: DO THIS IMMEDIATELY BEFORE STOPPING CC and BAKING
 # Cleanup initial shared cyclecloud creds

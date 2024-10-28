@@ -1,4 +1,28 @@
-#! /bin/bash
+#!/bin/bash
+
+# By default, do not automatically delete the resource group so VM can be accessed manually
+# - scripted tests should delete the resource group
+automatic_cleanup=0  
+
+# Parse options
+while getopts ":d" opt; do
+  case $opt in
+    d) automatic_cleanup=1
+       echo "Will automatically delete the resource group after testing"
+    ;;
+    \?) echo "Invalid option: -$OPTARG" >&2
+        exit 1
+    ;;
+    :) echo "Option -$OPTARG requires an argument." >&2
+       exit 1
+    ;;
+  esac
+done
+
+# Shift processed options away
+shift $((OPTIND - 1))
+
+# Access remaining positional parameters
 managed_image_id=$1
 
 if [ -z $managed_image_id ];then
@@ -85,9 +109,22 @@ sleep 60
 
 echo "Running Automated test..."
 bash -c "./test_cc_vm.sh $tmpgroup ${tmpgroup}-cc-vm"
+PASS_FAIL=$?
+
+if [ ${automatic_cleanup} -eq 1 ]; then
+    echo "Cleaning up test resources..."
+    az group delete -n $tmpgroup --no-wait --yes
+else
+    echo ""
+    echo "IMPORTANT: Delete the resource group after testing to avoid leaking a VM!"
+    echo "Command:  "
+    echo "      az group delete -n $tmpgroup --no-wait"
+    echo ""
+fi
 
 echo ""
-echo "IMPORTANT: Delete the resource group after testing to avoid leaking a VM!"
-echo "Command:  "
-echo "      az group delete -n $tmpgroup --no-wait"
+echo "Image:"
+echo "OS_IMAGE_RESOURCE_ID=${managed_image_id}"
 echo ""
+
+exit ${PASS_FAIL}
