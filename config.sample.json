@@ -7,6 +7,7 @@
     "virtual_network_subnet_name": "<existing subnet name for build and publish>",
     "virtual_network_resource_group_name": "<resource group name for virtual network>",
     "cyclecloud_version": "8.6.5",
+    "cyclecloud_package_name": "cyclecloud8-8.6.5-5688.x86_64.rpm",
     "publish": {
         "image_gallery": "<compute image gallery name for publish>"
     },

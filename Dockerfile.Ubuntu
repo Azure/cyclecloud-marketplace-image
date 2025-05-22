@@ -1,0 +1,23 @@
+FROM ubuntu:22.04 AS base
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "base"
+
+
+# Install required tools and dependencies
+FROM base AS stage1
+ADD install-dep.sh /tmp/install-dep.sh
+RUN chmod +x /tmp/install-dep.sh
+RUN /tmp/install-dep.sh
+RUN echo "stage1"
+
+# Copy the marketplace image build script and build package and run it with tests
+FROM stage1 AS stage2
+WORKDIR /opt/cycle
+ADD . /opt/cycle/cyclecloud-marketplace-image
+WORKDIR /opt/cycle/cyclecloud-marketplace-image
+RUN /opt/cycle/cyclecloud-marketplace-image/build_image.sh -t 
+RUN echo "stage2"
+
+
+CMD ["/bin/bash"]

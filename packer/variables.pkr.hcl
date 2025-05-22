@@ -57,3 +57,8 @@ variable "virtual_network_subnet_name" {
 variable "virtual_network_resource_group_name" {
   type = string
 }
+
+variable "cyclecloud_package_name" {
+  type = string
+  default = ""
+}

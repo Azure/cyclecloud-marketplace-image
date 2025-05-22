@@ -59,12 +59,13 @@ read_value build_image_offer ".build.image_offer"
 read_value build_image_sku ".build.image_sku"
 read_value build_vm_size ".build.vm_size"
 read_value cyclecloud_version ".cyclecloud_version"
+read_value cyclecloud_package_name ".cyclecloud_package_name"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
 # run packer
 pushd ./packer
-packer_log=../packer-output-$timestamp.log
+packer_log=packer-output-$timestamp.log
 packer init ./ccmarketplace.pkr.hcl | tee $packer_log
 packer build \
     -var location=$location \
@@ -80,8 +81,9 @@ packer build \
     -var image_sku=$build_image_sku \
     -var vm_size=$build_vm_size \
     -var cyclecloud_version=$cyclecloud_version \
+    -var cyclecloud_package_name=$cyclecloud_package_name \
     . \
-    | tee -a $packer_log
+    | tee -a ../$packer_log
 
 if [ $? != 0 ]; then
     echo "ERROR: Bad exit status for packer"

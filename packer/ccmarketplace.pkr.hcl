@@ -57,6 +57,11 @@ build {
     destination = "/tmp/install_cli.py"
   }
 
+  provisioner "file" {
+    source = "../${var.cyclecloud_package_name}"
+    destination = "/tmp/${var.cyclecloud_package_name}"
+  }
+
 
   provisioner "shell" {
 
@@ -65,7 +70,7 @@ build {
     inline = [
         "set -e",
         "chmod +x /tmp/setup_cyclecloud.sh",
-        "/tmp/setup_cyclecloud.sh ${var.cyclecloud_version}",
+        "/tmp/setup_cyclecloud.sh ${var.cyclecloud_version} /tmp/${var.cyclecloud_package_name}",
         "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ]
 
