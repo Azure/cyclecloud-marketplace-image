@@ -35,7 +35,7 @@ if [ ! -f ~/.ssh/id_rsa.pub ]; then
 fi
 
 # Ensure that az cli is installed
-sudo apt install --upgrade -y azure-cli
+apt install --upgrade -y azure-cli
 
 echo ""
 echo "Testing Image: "

@@ -93,6 +93,8 @@ popd
 
 # get new Managed Image from the packer output
 managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' ${packer_log})"
+export OS_IMAGE_RESOURCE_ID=$managed_image_id
+env > /tmp/build_image_env.env
 
 if [ ${run_tests} -eq 1 ]; then
     echo "Running automated tests for image ${managed_image_id}"

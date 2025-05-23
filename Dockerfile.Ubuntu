@@ -5,19 +5,33 @@ RUN echo "base"
 
 
 # Install required tools and dependencies
-FROM base AS stage1
+FROM base AS install_deps
 ADD install-dep.sh /tmp/install-dep.sh
 RUN chmod +x /tmp/install-dep.sh
 RUN /tmp/install-dep.sh
-RUN echo "stage1"
+RUN echo "install_deps"
 
 # Copy the marketplace image build script and build package and run it with tests
-FROM stage1 AS stage2
+FROM install_deps AS add_project
 WORKDIR /opt/cycle
 ADD . /opt/cycle/cyclecloud-marketplace-image
-WORKDIR /opt/cycle/cyclecloud-marketplace-image
-RUN /opt/cycle/cyclecloud-marketplace-image/build_image.sh -t 
-RUN echo "stage2"
+WORKDIR /opt/cycle/cyclecloud-marketplace-image 
+RUN echo "add_project"
+
+FROM add_project AS build_image
+RUN /opt/cycle/cyclecloud-marketplace-image/build_image.sh && \
+   echo "build_image"
+
+FROM build_image AS test_cc_image
+COPY --from=build_image /tmp/build_image_env.env /tmp/build_image_env.env
+RUN set -a && . /tmp/build_image_env.env && set +a && \
+   /opt/cycle/cyclecloud-marketplace-image/test_cc_image.sh ${OS_IMAGE_RESOURCE_ID} && \
+   echo "test_cc_image"
+
+FROM add_project AS run_test_on_existing_image
+ARG OS_IMAGE_RESOURCE_ID
+RUN /opt/cycle/cyclecloud-marketplace-image/test_cc_image.sh ${OS_IMAGE_RESOURCE_ID} && \
+   echo "run_test_on_existing_image"
 
 
 CMD ["/bin/bash"]
