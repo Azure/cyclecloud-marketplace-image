@@ -58,7 +58,16 @@ variable "virtual_network_resource_group_name" {
   type = string
 }
 
+variable "user_assigned_identity_client_id" {
+  type = string
+}
+
 variable "cyclecloud_package_name" {
   type = string
-  default = ""
+  default = ""  
+}
+
+variable "repo_stream"{
+  type = string
+  default = "prod"
 }

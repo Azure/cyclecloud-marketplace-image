@@ -53,9 +53,10 @@ function read_value {
 
 read_value location ".location"
 read_value subscription_id ".subscription_id"
+read_value user_assigned_identity_client_id ".user_assigned_identity_client_id"
 
 # login with managed identity
-az login -i --output table
+az login --identity --client-id ${user_assigned_identity_client_id}
 
 # ensure we're using the subscription that holds the image
 
