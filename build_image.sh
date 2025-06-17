@@ -68,8 +68,8 @@ timestamp=$(date +%Y%m%d-%H%M%S)
 # run packer
 pushd ./packer
 packer_log=packer-output-$timestamp.log
-packer init ./ccmarketplace.pkr.hcl | tee $packer_log
-if [ "$repo_stream" == "local" ]; then
+packer init ./ccmarketplace.pkr.hcl | tee ../logs/$packer_log
+if [ "$repo_stream" == "insiders-fast" ]; then
     packer build \
         -var location=$location \
         -var subscription_id=$subscription_id \
@@ -88,7 +88,7 @@ if [ "$repo_stream" == "local" ]; then
         -var repo_stream=$repo_stream \
         -var cyclecloud_package_name=$cyclecloud_package_name \
         . \
-        | tee -a ../$packer_log
+        | tee -a ../logs/$packer_log
 else
     packer build \
         -var location=$location \
@@ -107,7 +107,7 @@ else
         -var cyclecloud_version=$cyclecloud_version \
         -var repo_stream=$repo_stream \
         . \
-        | tee -a ../$packer_log
+        | tee -a ../logs/$packer_log
 fi
 
 if [ $? != 0 ]; then
@@ -117,7 +117,7 @@ fi
 popd
 
 # get new Managed Image from the packer output
-managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' ${packer_log})"
+managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' logs/${packer_log})"
 export OS_IMAGE_RESOURCE_ID=$managed_image_id
 env > /tmp/build_image_env.env
 

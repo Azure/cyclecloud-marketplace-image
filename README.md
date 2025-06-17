@@ -28,29 +28,19 @@ cd /opt/cycle/cyclecloud-marketplace-image/
    3. Fill in the target image_gallery for publishing (optional)
    4. Fill in the base VM image offer details
    5. Fill in the user_assigned_identity_client_id of the User Assigned Managed Identity.
-   6. Fill repo_stream from where to install CC: insiders, local or prod. (optional, defualt: prod)
-   7. If repo_stream is local it will use local package which needs to be specified in 
+   6. Fill repo_stream from where to install CC: insiders, insiders-fast or prod. (optional, defualt: prod)
+   7. If repo_stream is insiders-fast it will use local package which needs to be specified in 
       cyclecloud_package_name (optional) If using this option you need to place the package in cyclecloud_local folder. 
 
-2. You can build a docker container in stages. Here is the list of stages:
-   1. **add_project**: This stage basically add files from current directory which is cyclecloud-marketplace-image to docker folder.
-   2. **install_deps**: This stage install dependencies to build an image by running install-dep.sh script
-   3. **build_image**: This stage runs the build_image.sh script. 
-   4. **test_cc_image**: This stage tests the cc image in addition to building.
-   5. **run_test_on_existing_image** : If you only wish to run tests on existing image then you can pass an ARG OS_IMAGE_RESOURCE_ID and run tests.  
-   
+2. You can build the image by running docker-build.sh script after updating config.json file. This will print the OS_IMAGE_RESOURCE_ID
 ```
-   docker build -t cc_marketplace_build -f Dockerfile.Ubuntu . --target "<stage>"
+  ./docker-build.sh
+```
+You can check the logs in logs/packer*log file
 
-   docker build --build-arg OS_IMAGE_RESOURCE_ID="<Resource-id of image>" -t cc_marketplace_build -f Dockerfile.Ubuntu . --target run_test_on_existing_image
+3. You can run tests using docker-run-tests.sh file 
 ```
-   If you want to verify the build logs as they are not stored by docker once build is complete you can store in build.log file and check later. 
-```
-   docker build -t cc_marketplace_build -f Dockerfile.Ubuntu . --target "<stage>" > build.log 2>&1
-```  
-   At any stage to debug you can start the docker container with below command and run the remaining scripts manually:
-```
-   docker run -it cc_marketplace_build bash
+./docker-run-tests.sh <OS_IMAGE_RESOURCE_ID>
 ```
 ## Building the Image inside Container
 

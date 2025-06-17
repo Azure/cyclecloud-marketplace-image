@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base
+FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04 AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "base"
@@ -21,16 +21,9 @@ RUN chmod +x /opt/cycle/cyclecloud-marketplace-image/build_image.sh && \
     /opt/cycle/cyclecloud-marketplace-image/build_image.sh && \
    echo "build_image"
 
-FROM build_image AS test_cc_image
-COPY --from=build_image /tmp/build_image_env.env /tmp/build_image_env.env
-RUN set -a && . /tmp/build_image_env.env && set +a && \
-   /opt/cycle/cyclecloud-marketplace-image/test_cc_image.sh ${OS_IMAGE_RESOURCE_ID} && \
-   echo "test_cc_image"
-
 FROM install_deps AS run_test_on_existing_image
 ARG OS_IMAGE_RESOURCE_ID
 RUN /opt/cycle/cyclecloud-marketplace-image/test_cc_image.sh ${OS_IMAGE_RESOURCE_ID} && \
    echo "run_test_on_existing_image"
-
 
 CMD ["/bin/bash"]
