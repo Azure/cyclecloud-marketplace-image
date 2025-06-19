@@ -1,1 +1,0 @@
-This folder is used to store local CC install when using repo_stream = local option.

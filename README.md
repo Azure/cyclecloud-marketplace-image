@@ -11,7 +11,7 @@ See LICENSE for further information.
 ## Building the Image
 
 To build a new image which replicates the CycleCloud Marketplace image:
-1. Start a Virtual Machine from Azure Marketplace or Cyclecloud with Ubuntu OS image.You need to install docker if starting a VM from Azure directly. 
+1. Start a Virtual Machine from Azure Marketplace or Cyclecloud with Ubuntu OS image.Maybe : "Install docker on the VM if not present."
 2. Create at least one Resource Group, Virtual Network and Subnet in which to build the image
 3. Create a User-Assigned Managed ID with permissions to create the Builder VM and Storage Blob Contributor to the CycleCloud Locker Storage Account
 4. (Optionally) Create a Compute Image Gallery to hold the built images
@@ -28,9 +28,8 @@ cd /opt/cycle/cyclecloud-marketplace-image/
    3. Fill in the target image_gallery for publishing (optional)
    4. Fill in the base VM image offer details
    5. Fill in the user_assigned_identity_client_id of the User Assigned Managed Identity.
-   6. Fill repo_stream from where to install CC: insiders, insiders-fast or prod. (optional, defualt: prod)
-   7. If repo_stream is insiders-fast it will use local package which needs to be specified in 
-      cyclecloud_package_name (optional) If using this option you need to place the package in cyclecloud_local folder. 
+   6. Fill repo_stream from where to install CC: insiders or "". (optional, defualt: prod)
+   7. You need to specify  cyclecloud_package_name if you are using local package and have it in the dir
 
 2. You can build the image by running docker-build.sh script after updating config.json file. This will print the OS_IMAGE_RESOURCE_ID
 ```
@@ -42,15 +41,6 @@ You can check the logs in logs/packer*log file
 ```
 ./docker-run-tests.sh <OS_IMAGE_RESOURCE_ID>
 ```
-## Building the Image inside Container
-
-Run the build script. This launches the packer process
- ``` 
-    ./build_image.sh [-t]
- ```
- 1. The script will output the OS_VHD_URL and DATA_VHD_URL
- 2. Use the "-t" option to automatically run the image tests
-
 ## Testing the Image inside Container
 
 Test the new image using the Image Resource ID:

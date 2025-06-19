@@ -69,46 +69,27 @@ timestamp=$(date +%Y%m%d-%H%M%S)
 pushd ./packer
 packer_log=packer-output-$timestamp.log
 packer init ./ccmarketplace.pkr.hcl | tee ../logs/$packer_log
-if [ "$repo_stream" == "insiders-fast" ]; then
-    packer build \
-        -var location=$location \
-        -var subscription_id=$subscription_id \
-        -var resource_group=$resource_group \
-        -var build_resource_group_name=$build_resource_group_name \
-        -var virtual_network_name=$virtual_network_name \
-        -var virtual_network_subnet_name=$virtual_network_subnet_name \
-        -var virtual_network_resource_group_name=$virtual_network_resource_group_name \
-        -var image_name=$build_image_name \
-        -var image_publisher=$build_image_publisher \
-        -var image_offer=$build_image_offer \
-        -var image_sku=$build_image_sku \
-        -var vm_size=$build_vm_size \
-        -var user_assigned_identity_client_id=$user_assigned_identity_client_id \
-        -var cyclecloud_version=$cyclecloud_version \
-        -var repo_stream=$repo_stream \
-        -var cyclecloud_package_name=$cyclecloud_package_name \
-        . \
-        | tee -a ../logs/$packer_log
-else
-    packer build \
-        -var location=$location \
-        -var subscription_id=$subscription_id \
-        -var resource_group=$resource_group \
-        -var build_resource_group_name=$build_resource_group_name \
-        -var virtual_network_name=$virtual_network_name \
-        -var virtual_network_subnet_name=$virtual_network_subnet_name \
-        -var virtual_network_resource_group_name=$virtual_network_resource_group_name \
-        -var image_name=$build_image_name \
-        -var image_publisher=$build_image_publisher \
-        -var image_offer=$build_image_offer \
-        -var image_sku=$build_image_sku \
-        -var vm_size=$build_vm_size \
-        -var user_assigned_identity_client_id=$user_assigned_identity_client_id \
-        -var cyclecloud_version=$cyclecloud_version \
-        -var repo_stream=$repo_stream \
-        . \
-        | tee -a ../logs/$packer_log
-fi
+
+packer build \
+    -var location=$location \
+    -var subscription_id=$subscription_id \
+    -var resource_group=$resource_group \
+    -var build_resource_group_name=$build_resource_group_name \
+    -var virtual_network_name=$virtual_network_name \
+    -var virtual_network_subnet_name=$virtual_network_subnet_name \
+    -var virtual_network_resource_group_name=$virtual_network_resource_group_name \
+    -var image_name=$build_image_name \
+    -var image_publisher=$build_image_publisher \
+    -var image_offer=$build_image_offer \
+    -var image_sku=$build_image_sku \
+    -var vm_size=$build_vm_size \
+    -var user_assigned_identity_client_id=$user_assigned_identity_client_id \
+    -var cyclecloud_version=$cyclecloud_version \
+    -var repo_stream=$repo_stream \
+    -var cyclecloud_package_name=$cyclecloud_package_name \
+    . \
+    | tee -a ../logs/$packer_log
+
 
 if [ $? != 0 ]; then
     echo "ERROR: Bad exit status for packer"
@@ -118,8 +99,7 @@ popd
 
 # get new Managed Image from the packer output
 managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' logs/${packer_log})"
-export OS_IMAGE_RESOURCE_ID=$managed_image_id
-env > /tmp/build_image_env.env
+export OS_IMAGE_RESOURCE_ID=$managed_image_id > ./test_image_env.sh
 
 if [ ${run_tests} -eq 1 ]; then
     echo "Running automated tests for image ${managed_image_id}"

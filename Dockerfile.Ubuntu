@@ -16,14 +16,4 @@ RUN chmod +x /opt/cycle/cyclecloud-marketplace-image/install-dep.sh
 RUN /opt/cycle/cyclecloud-marketplace-image/install-dep.sh
 RUN echo "install_deps"
 
-FROM install_deps AS build_image
-RUN chmod +x /opt/cycle/cyclecloud-marketplace-image/build_image.sh && \
-    /opt/cycle/cyclecloud-marketplace-image/build_image.sh && \
-   echo "build_image"
-
-FROM install_deps AS run_test_on_existing_image
-ARG OS_IMAGE_RESOURCE_ID
-RUN /opt/cycle/cyclecloud-marketplace-image/test_cc_image.sh ${OS_IMAGE_RESOURCE_ID} && \
-   echo "run_test_on_existing_image"
-
 CMD ["/bin/bash"]

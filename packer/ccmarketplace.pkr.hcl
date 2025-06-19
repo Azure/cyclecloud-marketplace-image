@@ -57,10 +57,10 @@ build {
     destination = "/tmp/install_cli.py"
   }
 
-provisioner "file" {
-  source      = "../cyclecloud_local/"
-  destination = "/tmp"
-}
+  provisioner "file" {
+    source = var.cyclecloud_package_name != "" ? "../${var.cyclecloud_package_name}" : "../README.md"
+    destination = var.cyclecloud_package_name != "" ? "/tmp/${var.cyclecloud_package_name}" : "/tmp/README.md"
+  }
 
 
 

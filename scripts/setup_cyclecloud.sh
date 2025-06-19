@@ -81,7 +81,7 @@ restorecon -r -v ${CS_HOME}
 # explicitly install java 8 before cyclecloud (to ensure environment is set)
 yum -y install java-1.8.0-openjdk-headless
 
-if [[ $REPO_STREAM == "local" ]]; then
+if [[ -n $CC_PACKAGE_NAME ]]; then
    yum -y install ${CC_PACKAGE_NAME}
 else
    yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
