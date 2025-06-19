@@ -15,6 +15,6 @@ curl -k 'https://localhost/'
 curl -k 'https://localhost/health_monitor'
 
 echo "Verifying CycleCloud CLI"
-cyclecloud initialize --help
+cyclecloud initialize --help | grep "Usage: cyclecloud initialize"
 
 echo "Done"
