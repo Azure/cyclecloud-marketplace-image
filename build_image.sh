@@ -59,13 +59,17 @@ read_value build_image_offer ".build.image_offer"
 read_value build_image_sku ".build.image_sku"
 read_value build_vm_size ".build.vm_size"
 read_value cyclecloud_version ".cyclecloud_version"
+read_value user_assigned_identity_client_id ".user_assigned_identity_client_id"
+read_value cyclecloud_package_name ".cyclecloud_package_name"
+read_value repo_stream ".repo_stream"
 
 timestamp=$(date +%Y%m%d-%H%M%S)
 
 # run packer
 pushd ./packer
-packer_log=../packer-output-$timestamp.log
-packer init ./ccmarketplace.pkr.hcl | tee $packer_log
+packer_log=packer-output-$timestamp.log
+packer init ./ccmarketplace.pkr.hcl | tee ../logs/$packer_log
+
 packer build \
     -var location=$location \
     -var subscription_id=$subscription_id \
@@ -79,9 +83,13 @@ packer build \
     -var image_offer=$build_image_offer \
     -var image_sku=$build_image_sku \
     -var vm_size=$build_vm_size \
+    -var user_assigned_identity_client_id=$user_assigned_identity_client_id \
     -var cyclecloud_version=$cyclecloud_version \
+    -var repo_stream=$repo_stream \
+    -var cyclecloud_package_name=$cyclecloud_package_name \
     . \
-    | tee -a $packer_log
+    | tee -a ../logs/$packer_log
+
 
 if [ $? != 0 ]; then
     echo "ERROR: Bad exit status for packer"
@@ -90,7 +98,8 @@ fi
 popd
 
 # get new Managed Image from the packer output
-managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' ${packer_log})"
+managed_image_id="$(grep -Po '(?<=ManagedImageId\: )[^$]*' logs/${packer_log})"
+export OS_IMAGE_RESOURCE_ID=$managed_image_id > ./test_image_env.sh
 
 if [ ${run_tests} -eq 1 ]; then
     echo "Running automated tests for image ${managed_image_id}"

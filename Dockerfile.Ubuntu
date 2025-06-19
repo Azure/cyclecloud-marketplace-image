@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04 AS base
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "base"
+
+# Copy the marketplace image build script and build package and run it with tests
+FROM base AS add_project
+WORKDIR /opt/cycle
+ADD . /opt/cycle/cyclecloud-marketplace-image
+WORKDIR /opt/cycle/cyclecloud-marketplace-image
+RUN echo "add_project"
+
+# Install required tools and dependencies
+FROM add_project AS install_deps
+RUN chmod +x /opt/cycle/cyclecloud-marketplace-image/install-dep.sh
+RUN /opt/cycle/cyclecloud-marketplace-image/install-dep.sh
+RUN echo "install_deps"
+
+CMD ["/bin/bash"]

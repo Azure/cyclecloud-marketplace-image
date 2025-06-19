@@ -39,9 +39,10 @@ function read_value {
 
 read_value location ".location"
 read_value subscription_id ".subscription_id"
+read_value user_assigned_identity_client_id ".user_assigned_identity_client_id"
 
 # login with managed identity
-az login -i --output table
+az login --identity --client-id ${user_assigned_identity_client_id}
 
 # ensure we're using the subscription that holds the image
 
@@ -49,10 +50,14 @@ az account set -s "${subscription_id}"
 
 
 echo "Running Automated test..."
+
+
+# Verify Cyclecloud checks
 az vm run-command invoke -g ${resource_group} -n ${vm_resource_name} --command-id RunShellScript --scripts @scripts/run_cc_vm_checks.sh > ./test_cc_vm.json
 if [ $(cat ./test_cc_vm.json | jq '.value[0].code') != '"ProvisioningState/succeeded"' ]; then
     echo "ERROR: Automated test command failed..."
 fi
+
 cat ./test_cc_vm.json | jq '.value[0].message'
 if ! grep -q "jsvc.exec" ./test_cc_vm.json; then
    echo "ERROR: jsvc not found."

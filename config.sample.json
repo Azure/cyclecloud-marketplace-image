@@ -7,6 +7,9 @@
     "virtual_network_subnet_name": "<existing subnet name for build and publish>",
     "virtual_network_resource_group_name": "<resource group name for virtual network>",
     "cyclecloud_version": "8.6.5",
+    "user_assigned_identity_client_id" : "<user assigned identity client id>",
+    "repo_stream" : "prod",
+    "cyclecloud_package_name": "<local package name>",
     "publish": {
         "image_gallery": "<compute image gallery name for publish>"
     },

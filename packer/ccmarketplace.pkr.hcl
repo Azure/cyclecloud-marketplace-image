@@ -34,7 +34,7 @@ source "azure-arm" "cyclecloud_builder" {
   # Do NOT specify location when using an existing build_resource_group_name
   # location = "${var.location}"
   build_resource_group_name = "${var.build_resource_group_name}"
-
+  client_id = "${var.user_assigned_identity_client_id}"
   vm_size = "${var.vm_size}"
 }
 
@@ -57,6 +57,12 @@ build {
     destination = "/tmp/install_cli.py"
   }
 
+  provisioner "file" {
+    source = var.cyclecloud_package_name != "" ? "../${var.cyclecloud_package_name}" : "../README.md"
+    destination = var.cyclecloud_package_name != "" ? "/tmp/${var.cyclecloud_package_name}" : "/tmp/README.md"
+  }
+
+
 
   provisioner "shell" {
 
@@ -65,7 +71,11 @@ build {
     inline = [
         "set -e",
         "chmod +x /tmp/setup_cyclecloud.sh",
-        "/tmp/setup_cyclecloud.sh ${var.cyclecloud_version}",
+        "if [ -z \"${var.cyclecloud_package_name}\" ]; then",
+            "/tmp/setup_cyclecloud.sh ${var.cyclecloud_version} ${var.repo_stream}",
+        "else",
+            "/tmp/setup_cyclecloud.sh ${var.cyclecloud_version} ${var.repo_stream} /tmp/${var.cyclecloud_package_name}",
+        "fi",
         "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ]
 

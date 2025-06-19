@@ -11,26 +11,13 @@ See LICENSE for further information.
 ## Building the Image
 
 To build a new image which replicates the CycleCloud Marketplace image:
-1. Start and configure a CycleCloud instance from Marketplace
+1. Start a Virtual Machine from Azure Marketplace or Cyclecloud with Ubuntu OS image.Maybe : "Install docker on the VM if not present."
 2. Create at least one Resource Group, Virtual Network and Subnet in which to build the image
 3. Create a User-Assigned Managed ID with permissions to create the Builder VM and Storage Blob Contributor to the CycleCloud Locker Storage Account
 4. (Optionally) Create a Compute Image Gallery to hold the built images
-5. Clone this repository
-6. Upload the mpimagebuild project to your Storage Locker
-``` bash
-cd mpimagebuilder
-cyclecloud project upload <locker_name>
-```
-1. Import the ``mpimagebuilder`` cluster template to CycleCloud
-``` bash
-cyclecloud import_template -f templates/mpimagebuilder.txt
-```
-1. From the CycleCloud GUI, create a new mpimagebuild cluster with:
-   1. The User-Assigned Managed ID created above
-   2. An Ubuntu VM image
-2. Start the cluster and wait for the ``builder`` VM to go to the ``Running`` (green) state
-3. SSH to the ``builder`` VM
-4.  Become root and go to the build directory:
+5. SSH to the VM
+6. Clone this repository
+7.  Become root and go to the build directory:
 ``` bash
 sudo -i
 cd /opt/cycle/cyclecloud-marketplace-image/
@@ -40,25 +27,32 @@ cd /opt/cycle/cyclecloud-marketplace-image/
    2. Fill in the target subscription_id used for the packer build
    3. Fill in the target image_gallery for publishing (optional)
    4. Fill in the base VM image offer details
-2. . Run the build script. This launches the packer process
-``` bash
-./build_image.sh [-t]
+   5. Fill in the user_assigned_identity_client_id of the User Assigned Managed Identity.
+   6. Fill repo_stream from where to install CC: insiders or "". (optional, defualt: prod)
+   7. You need to specify  cyclecloud_package_name if you are using local package and have it in the dir
+
+2. You can build the image by running docker-build.sh script after updating config.json file. This will print the OS_IMAGE_RESOURCE_ID
 ```
-    1. The script will output the OS_VHD_URL and DATA_VHD_URL
-    2. Use the "-t" option to automatically run the image tests
+  ./docker-build.sh
+```
+You can check the logs in logs/packer*log file
 
-## Testing the Image
+3. You can run tests using docker-run-tests.sh file 
+```
+./docker-run-tests.sh <OS_IMAGE_RESOURCE_ID>
+```
+## Testing the Image inside Container
 
-1. Test the new image using the Image Resource ID:
+Test the new image using the Image Resource ID:
 
 The build script outputs the Resource ID for the new image. 
 To test the image as part of the build, use the "-t" option to `build_image.sh`.
 To (re-)test the image directly provide the Image Resource ID as input to the test script:
-    ```
+ ``` 
     ./test_cc_image.sh [-d] ${OS_IMAGE_RESOURCE_ID}
-    ```
-    1. The script will output the command to manually clean up the test resources.
-    2. Use the "-d" option to automatically delete the test resources.
+ ```
+ 1. The script will output the command to manually clean up the test resources.
+ 2. Use the "-d" option to automatically delete the test resources.
 
 The test script will launch a VM and run a few cursory automated tests.
 
@@ -77,5 +71,3 @@ az group delete -n ${tmpgroup} --no-wait
 
 4. See [CycleCloud Publishing](https://microsoft.sharepoint.com/:w:/t/CycleEngineeringTeam/EYORK6cI7ExGrFHGXIrOHrAB5WNvPRaOkq0VBiM0bD4-WA?e=pMBt6l) for
 details on how to use the Marketplace Portal.
-
-

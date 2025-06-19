@@ -4,6 +4,8 @@ set -ex
 # We tag the Distribution with MP Image Version string to differentiate multiple Marketplace
 # image builds of the same (or different) CycleCloud Releases in telemetry
 CC_MARKETPLACE_VERSION=${1}
+REPO_STREAM=${2:-"prod"}
+CC_PACKAGE_NAME=${3}
 
 function version_less_than_850 {
    cat << EOF | sort -V -C
@@ -37,10 +39,16 @@ EOF
 yum install -y azure-cli
 
 
+if [[ $REPO_STREAM == "insiders" ]]; then
+   BASE_URL=https://packages.microsoft.com/yumrepos/cyclecloud-insiders
+else
+   BASE_URL=https://packages.microsoft.com/yumrepos/cyclecloud
+fi
+
 cat > /etc/yum.repos.d/cyclecloud.repo <<EOF
 [cyclecloud]
 name=cyclecloud
-baseurl=https://packages.microsoft.com/yumrepos/cyclecloud
+baseurl=$BASE_URL
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
@@ -72,7 +80,12 @@ restorecon -r -v ${CS_HOME}
 
 # explicitly install java 8 before cyclecloud (to ensure environment is set)
 yum -y install java-1.8.0-openjdk-headless
-yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
+
+if [[ -n $CC_PACKAGE_NAME ]]; then
+   yum -y install ${CC_PACKAGE_NAME}
+else
+   yum -y install cyclecloud8-${CC_MARKETPLACE_VERSION}
+fi
 
 # # Update python to 3.9 or later for latest openssl and cryptography support
 # # Required for CycleCloud CLI
